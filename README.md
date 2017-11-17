@@ -6,7 +6,7 @@
 
 Для установки данного модуля необходимо переместить папки `ext`, `includes` и файл `callback.php` из папки `src` [архива](https://github.com/yandex-money/yandex-money-cms-v2-oscommerce/archive/master.zip) в корень Вашего сайта.
 
-По умолчанию модуль устанавливается для работы с Яндекс.Кассой, для того чтобы его изменить в файле [src/ext/modules/payment/yandexmoney/yandexmoney.php](src/ext/modules/payment/yandex_money/yandexmoney.php) найдите строки:
+По умолчанию модуль устанавливается для работы с Яндекс.Кассой, для того чтобы его изменить в файле [src/ext/modules/payment/yandex_money/yandex_money.php](src/ext/modules/payment/yandex_money/yandex_money.php) найдите строки:
 ```php
 // Устанавливаем режим работы:
 // MODULE_PAYMENT_YANDEXMONEY_MODE1 - Яндекс.Касса
