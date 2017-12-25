@@ -1,6 +1,6 @@
 <?php
 
-namespace YandexMoneyModule;
+namespace YandexMoney;
 
 use YaMoney\Model\PaymentMethodType;
 

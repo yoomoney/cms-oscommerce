@@ -13,7 +13,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.1';
+    const MODULE_VERSION = '1.0.2';
 
     public $code;
     public $title;
@@ -61,10 +61,144 @@ class Yandex_Money
             $this->description = str_replace($res[0][0], "", $this->description);
             $this->description = str_replace($res[0][1], "", $this->description);
         }
+
+        $this->applyVersionInfo();
+    }
+
+    private function applyVersionInfo()
+    {
+        $version = $this->getUpdater()->getVersionInfo();
+        $versionText = '<h4>О модуле:</h4><ul><li>Установленная версия модуля — ' . self::MODULE_VERSION . '</li>'
+            . '<li>Последняя версия модуля — ' . $version['newVersion'] . '</li>'
+            . '<li>Последняя проверка наличия новых версий — ' . $version['newVersionInfo']['date'] . '</li></ul>';
+        if ($version['new_version_available']) {
+            $versionText .= '<h4>История изменений:</h4><p>' . $version['changelog'] . '</p>'
+                . '<a href="javascript://" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-primary" id="update-module"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Обновить</span></a>';
+        } else {
+            $versionText .= '<p>Установлена последняя версия модуля.</p>';
+        }
+
+        $backups = $this->getUpdater()->getBackupList();
+        if (!empty($backups)) {
+            $versionText .= '<p><a id="backup-list" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary" href="javascript://"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Резервные копии ('
+                . count($backups) . ')</span></a></p><div id="backup-list-window" style="display:none;"><table><thead><tr>'
+                . '<th>Версия</th><th>Имя файла</th><th>Дата создания</th><th></th><th></th></tr></thead><tbody><tr>'
+                . '<td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
+        }
+
+        $js = <<<JS
+<style>
+#backup-list-window table {
+    width: 100%;
+}
+#backup-list-window th, #backup-list-window td {
+    padding: 5px 10px;
+}
+</style>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    
+    jQuery('#backup-list-window').delegate('a.restore-backup', 'click', restoreBackupHandler);
+    jQuery('#backup-list-window').delegate('a.remove-backup', 'click', removeBackupHandler);
+    
+    jQuery('#update-module').click(updateModuleHandler);
+    
+    jQuery('#backup-list').click(function () {
+        jQuery.ajax({
+            url: 'ext/modules/payment/yandex_money/ajax.php',
+            method: 'GET',
+            data: {
+                action: 'backup_list'
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.success) {
+                    var tpl = '';
+                    for (var i = 0; i < result.list.length; ++i) {
+                        tpl += '<tr class="backup-row" data-name="' + result.list[i].name + '" data-id="' + result.list[i].version + '">'
+                            + '<td>' + result.list[i].version + '</td>'
+                            + '<td>' + result.list[i].name + '</td>'
+                            + '<td>' + result.list[i].date + '</td>'
+                            + '<td><a href="javascript://" class="restore-backup ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Восстановить</span></a></td>'
+                            + '<td><a href="javascript://" class="remove-backup ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Удалить</span></a></td></tr>';
+                    }
+                    jQuery('#backup-list-window table tbody').html(tpl);
+                    jQuery('#backup-list-window').dialog({
+                        width: 700
+                    });
+                }
+            }
+        });
+    });
+    
+    function restoreBackupHandler() {
+        var row = jQuery(this).parents('tr.backup-row')[0];
+        if (window.confirm('Вы действительно хотите восстановить резервную копию "' + row.dataset.id + '" из файла "' + row.dataset.name + '"?')) {
+            jQuery.ajax({
+                method: 'POST',
+                url: 'ext/modules/payment/yandex_money/ajax.php?action=restore_backup',
+                data: {
+                    file_name: row.dataset.name
+                },
+                dataType: 'json',
+                success: function (res) {
+                    alert(res.message);
+                    if (res.success) {
+                        document.location = document.location;
+                    }
+                }
+            });
+        }
+    }
+    
+    function removeBackupHandler() {
+        var row = jQuery(this).parents('tr.backup-row')[0];
+        if (window.confirm('Вы действительно хотите удалить резервную копию "' + row.dataset.name + '" для версии "' + row.dataset.id + '"?')) {
+            jQuery.ajax({
+                method: 'POST',
+                url: 'ext/modules/payment/yandex_money/ajax.php?action=remove_backup',
+                data: {
+                    file_name: row.dataset.name
+                },
+                dataType: 'json',
+                success: function (res) {
+                    alert(res.message);
+                    if (res.success) {
+                        row.remove();
+                    }
+                }
+            });
+        }
+    }
+    
+    function updateModuleHandler() {
+        if (window.confirm('Вы действительно хотите обновить модуль до последней версии?')) {
+            jQuery.ajax({
+                method: 'GET',
+                url: 'ext/modules/payment/yandex_money/ajax.php?action=update',
+                data: {
+                    action: 'update'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    alert(res.message);
+                    if (res.success) {
+                        document.location = document.location;
+                    }
+                }
+            });
+        }
+    }
+});
+</script>
+JS;
+
+        $this->description .= $versionText . $js;
     }
 
     public function javascript_validation()
     {
+
         return false;
     }
 
@@ -366,7 +500,17 @@ jQuery(document).ready(function () {
         $ym_payment_type = $_SESSION['ym_payment_type'];
         $order_id = (int)$insert_id;
         if ($this->mode == self::MODE_KASSA) {
-            $redirectUrl = tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, 'payment_confirmation=1&order_id='.$order_id);
+            $redirectUrl = str_replace(
+                '&amp;',
+                '&',
+                tep_href_link(
+                    FILENAME_CHECKOUT_CONFIRMATION,
+                    'payment_confirmation=1&order_id=' . $order_id,
+                    'SSL',
+                    false,
+                    false
+                )
+            );
             $order->info['order_id'] = $order_id;
             $payment = $this->getKassa()->createPayment($order, $ym_payment_type, $redirectUrl);
 
@@ -543,7 +687,7 @@ jQuery(document).ready(function () {
         $in = include_once($module_language_directory.$language."/modules/payment/yandex_money.php");
 
         if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
-            $installer = new \YandexMoneyModule\Installer();
+            $installer = new \YandexMoney\Installer();
             $installer->install();
             return;
         }
@@ -645,7 +789,7 @@ jQuery(document).ready(function () {
     function remove()
     {
         if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
-            $installer = new \YandexMoneyModule\Installer();
+            $installer = new \YandexMoney\Installer();
             $installer->uninstall();
         }
         tep_db_query(
@@ -712,19 +856,29 @@ jQuery(document).ready(function () {
     }
 
     /**
-     * @var \YandexMoneyModule\PaymentMethod\KassaPaymentMethod
+     * @var \YandexMoney\PaymentMethod\KassaPaymentMethod
      */
     private $kassaPaymentMethod;
 
     /**
-     * @return \YandexMoneyModule\PaymentMethod\KassaPaymentMethod
+     * @return \YandexMoney\PaymentMethod\KassaPaymentMethod
      */
     public function getKassa()
     {
         if ($this->kassaPaymentMethod === null) {
-            $this->kassaPaymentMethod = new \YandexMoneyModule\PaymentMethod\KassaPaymentMethod($this);
+            $this->kassaPaymentMethod = new \YandexMoney\PaymentMethod\KassaPaymentMethod($this);
         }
         return $this->kassaPaymentMethod;
+    }
+
+    private $updaterModule;
+
+    public function getUpdater()
+    {
+        if ($this->updaterModule === null) {
+            $this->updaterModule = new \YandexMoney\Updater($this);
+        }
+        return $this->updaterModule;
     }
 }
 

@@ -69,8 +69,8 @@ define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_AB", "Альфа-Клик")
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_SB", "Сбербанк: оплата по SMS или Сбербанк Онлайн");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_MA", "MasterPass");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_PB", "Интернет-банк Промсвязьбанка");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_MA", "QIWI Wallet");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_PB", "Доверительный платеж (Куппи.ру)");
+define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QW", "QIWI Wallet");
+define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QP", "Доверительный платеж (Куппи.ру)");
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'На расчетный счет организации с заключением договора с Яндекс.Деньгами');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'На счет физического лица в электронной валюте Яндекс.Денег');
@@ -93,8 +93,8 @@ define('MODULE_PAYMENT_YANDEXMONEY_AB_LNG', 'Оплата через Альфа-
 define('MODULE_PAYMENT_YANDEXMONEY_SB_LNG', 'Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн?');
 define('MODULE_PAYMENT_YANDEXMONEY_MA_LNG', 'Оплата через MasterPass?');
 define('MODULE_PAYMENT_YANDEXMONEY_PB_LNG', 'Оплата через интернет-банк Промсвязьбанка?');
-define('MODULE_PAYMENT_YANDEXMONEY_MA_LNG', 'Оплата через QIWI Wallet?');
-define('MODULE_PAYMENT_YANDEXMONEY_PB_LNG', 'Оплата через доверительный платеж (Куппи.ру)?');
+define('MODULE_PAYMENT_YANDEXMONEY_QW_LNG', 'Оплата через QIWI Wallet?');
+define('MODULE_PAYMENT_YANDEXMONEY_QP_LNG', 'Оплата через доверительный платеж (Куппи.ру)?');
 
 define('MODULE_PAYMENT_YANDEXMONEY_PASSWORD_LNG', 'Секретное слово (shopPassword) для обмена сообщениями');
 define('MODULE_PAYMENT_YANDEXMONEY_SHOPID_LNG', 'Идентификатор вашего магазина в Яндекс.Деньгах - ShopID  ');

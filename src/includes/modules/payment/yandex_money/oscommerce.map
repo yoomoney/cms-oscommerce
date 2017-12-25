@@ -1,0 +1,7 @@
+b:src
+f:ext/modules/payment/yandex_money/yandex_money.php
+f:includes/languages/{english,russian}/modules/payment/yandex_money.php
+f:admin/ext/modules/payment/yandex_money/ajax.php
+d:includes/modules/payment/yandex_money
+f:includes/modules/payment/yandex_money.php
+f:callback.php

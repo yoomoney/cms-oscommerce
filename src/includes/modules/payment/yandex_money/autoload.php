@@ -1,8 +1,7 @@
 <?php
 
-define('DS', DIRECTORY_SEPARATOR);
-define('YANDEX_MONEY_SDK_ROOT_PATH', dirname(__FILE__) . DS . 'yandex-checkout-sdk' . DS . 'lib');
-define('YANDEX_MONEY_PSR_LOG_PATH', dirname(__FILE__) . DS . 'yandex-checkout-sdk' . DS . 'vendor' . DS . 'psr-log');
+define('YANDEX_MONEY_SDK_ROOT_PATH', dirname(__FILE__) . '/yandex-checkout-sdk/lib');
+define('YANDEX_MONEY_PSR_LOG_PATH', dirname(__FILE__) . '/yandex-checkout-sdk/vendor/psr-log');
 define('YANDEX_MONEY_MODULE_PATH', dirname(__FILE__));
 
 function yandexMoneyLoadClass($className)
@@ -13,9 +12,9 @@ function yandexMoneyLoadClass($className)
     } elseif (strncmp('Psr\Log', $className, 7) === 0) {
         $path = YANDEX_MONEY_PSR_LOG_PATH;
         $length = 7;
-    } elseif (strncmp('YandexMoneyModule', $className, 17) === 0) {
+    } elseif (strncmp('YandexMoney', $className, 11) === 0) {
         $path = YANDEX_MONEY_MODULE_PATH;
-        $length = 17;
+        $length = 11;
     } else {
         return;
     }

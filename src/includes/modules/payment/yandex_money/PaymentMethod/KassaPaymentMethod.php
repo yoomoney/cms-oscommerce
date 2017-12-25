@@ -1,6 +1,6 @@
 <?php
 
-namespace YandexMoneyModule\PaymentMethod;
+namespace YandexMoney\PaymentMethod;
 
 use YaMoney\Client\YandexMoneyApi;
 use YaMoney\Model\ConfirmationType;
