@@ -2,7 +2,7 @@
 
 namespace YandexMoney;
 
-use YaMoney\Model\PaymentMethodType;
+use YandexCheckout\Model\PaymentMethodType;
 
 class Installer
 {

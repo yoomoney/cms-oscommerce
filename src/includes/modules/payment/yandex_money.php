@@ -1,5 +1,9 @@
 <?php
 
+use YandexCheckout\Model\Confirmation\ConfirmationRedirect;
+use YandexCheckout\Model\PaymentMethodType;
+use YandexCheckout\Model\PaymentStatus;
+
 define("YANDEXMONEY_WS_HTTP_CATALOG", '/');
 require_once(DIR_FS_CATALOG.'ext/modules/payment/yandex_money/yandex_money.php');
 $GLOBALS['YandexMoneyObject'] = new YandexMoneyObj();
@@ -13,7 +17,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.2';
+    const MODULE_VERSION = '1.0.3';
 
     public $code;
     public $title;
@@ -237,19 +241,19 @@ JS;
             } else {
                 $additional_fields = array();
                 $payment_types = array();
-                foreach (\YaMoney\Model\PaymentMethodType::getEnabledValues() as $value) {
+                foreach (PaymentMethodType::getEnabledValues() as $value) {
                     $const = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_' . strtoupper($value);
                     if (defined($const) && constant($const) == MODULE_PAYMENT_YANDEX_MONEY_TRUE) {
                         $const .= '_TEXT';
                         $payment_types[] = array('id' => $value, 'text' => defined($const) ? constant($const) : $const);
-                        if ($value === \YaMoney\Model\PaymentMethodType::QIWI) {
+                        if ($value === PaymentMethodType::QIWI) {
                             $additional_fields[] = array(
                                 'title' => '',
                                 'field' => '<label for="ya-qiwi-phone">' . MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL . '</label>'
                                     . tep_draw_input_field('ym_qiwi_phone', '', 'id="ya-qiwi-phone"')
                                     . '<div id="ya-qiwi-phone-error" style="display: none;">' . MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION . '</div>'
                             );
-                        } elseif ($value === \YaMoney\Model\PaymentMethodType::ALFABANK) {
+                        } elseif ($value === PaymentMethodType::ALFABANK) {
                             $additional_fields[] = array(
                                 'title' => '',
                                 'field' => '<label for="ya-alfa-login">' . MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_LABEL . '</label>'
@@ -470,13 +474,13 @@ jQuery(document).ready(function () {
                     return;
                 }
                 if ($payment->getPaid()) {
-                    if ($payment->getStatus() === \YaMoney\Model\PaymentStatus::WAITING_FOR_CAPTURE) {
+                    if ($payment->getStatus() === PaymentStatus::WAITING_FOR_CAPTURE) {
                         $capturedPayment = $this->getKassa()->capturePayment($payment, false);
                         if ($capturedPayment !== null) {
                             $payment = $capturedPayment;
                         }
                     }
-                    if ($payment->getStatus() === \YaMoney\Model\PaymentStatus::SUCCEEDED) {
+                    if ($payment->getStatus() === PaymentStatus::SUCCEEDED) {
                         $sqlData = array('orders_status' => (int)MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS);
                         tep_db_perform(TABLE_ORDERS, $sqlData, 'update', 'orders_id='.$orderId);
                     }
@@ -516,7 +520,7 @@ jQuery(document).ready(function () {
 
             if ($payment !== null) {
                 $confirmation = $payment->getConfirmation();
-                if ($confirmation instanceof \YaMoney\Model\Confirmation\ConfirmationRedirect) {
+                if ($confirmation instanceof ConfirmationRedirect) {
                     $redirectUrl = $confirmation->getConfirmationUrl();
                 }
             } else {
@@ -618,7 +622,7 @@ jQuery(document).ready(function () {
                 'MODULE_PAYMENT_YANDEX_MONEY_SHOP_PASSWORD',
                 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_MODE',
             );
-            foreach (\YaMoney\Model\PaymentMethodType::getEnabledValues() as $value) {
+            foreach (PaymentMethodType::getEnabledValues() as $value) {
                 $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_' . strtoupper($value);
             }
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER';

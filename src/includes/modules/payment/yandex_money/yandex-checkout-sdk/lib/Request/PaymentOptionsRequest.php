@@ -1,21 +1,45 @@
 <?php
 
-namespace YaMoney\Request;
+/**
+ * The MIT License
+ *
+ * Copyright (c) 2017 NBCO Yandex.Money LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-use YaMoney\Common\AbstractRequest;
-use YaMoney\Common\Exceptions\InvalidPropertyValueException;
-use YaMoney\Common\Exceptions\InvalidPropertyValueTypeException;
-use YaMoney\Helpers\TypeCast;
-use YaMoney\Model\ConfirmationType;
-use YaMoney\Model\CurrencyCode;
+namespace YandexCheckout\Request;
+
+use YandexCheckout\Common\AbstractRequest;
+use YandexCheckout\Common\Exceptions\InvalidPropertyValueException;
+use YandexCheckout\Common\Exceptions\InvalidPropertyValueTypeException;
+use YandexCheckout\Helpers\TypeCast;
+use YandexCheckout\Model\ConfirmationType;
+use YandexCheckout\Model\CurrencyCode;
 
 /**
  * Класс запроса списка возможных способов оплаты
  *
- * @package YaMoney\Request
+ * @package YandexCheckout\Request
  *
  * @property string $accountId Идентификатор магазина
- * @property string $gatewayId Идентификатор товара
+ * @property string $gatewayId Идентификатор шлюза
  * @property string $amount Сумма заказа
  * @property string $currency Код валюты
  * @property string $confirmationType Сценарий подтверждения платежа
@@ -28,7 +52,7 @@ class PaymentOptionsRequest extends AbstractRequest implements PaymentOptionsReq
     private $_accountId;
 
     /**
-     * @var string Идентификатор товара
+     * @var string Идентификатор шлюза
      */
     private $_gatewayId;
 
@@ -81,8 +105,8 @@ class PaymentOptionsRequest extends AbstractRequest implements PaymentOptionsReq
     }
 
     /**
-     * Возвращает идентификатор товара
-     * @return string Идентификатор товара
+     * Возвращает идентификатор шлюза
+     * @return string Идентификатор шлюза
      */
     public function getGatewayId()
     {
@@ -90,8 +114,8 @@ class PaymentOptionsRequest extends AbstractRequest implements PaymentOptionsReq
     }
 
     /**
-     * Проверяет, был ли установлен идентификатор товара
-     * @return bool True если идентификатор товара был установлен, false если нет
+     * Проверяет, был ли установлен идентификатор шлюза
+     * @return bool True если идентификатор шлюза был установлен, false если нет
      */
     public function hasGatewayId()
     {
@@ -99,8 +123,8 @@ class PaymentOptionsRequest extends AbstractRequest implements PaymentOptionsReq
     }
 
     /**
-     * Устанавливает идентификатор товара
-     * @param string|null $value Значение идентификатора товара, null если требуется удалить значение
+     * Устанавливает идентификатор шлюза
+     * @param string|null $value Значение идентификатора шлюза, null если требуется удалить значение
      */
     public function setGatewayId($value)
     {
@@ -155,7 +179,7 @@ class PaymentOptionsRequest extends AbstractRequest implements PaymentOptionsReq
             } elseif ($value < 0.01) {
                 $this->_amount = null;
             } else {
-                $this->_amount = (string)round($value, 2);
+                $this->_amount = number_format($value, 2, '.', '');
             }
         }
     }

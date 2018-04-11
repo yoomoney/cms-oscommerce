@@ -1,5 +1,10 @@
 <?php
 
+use YandexCheckout\Model\Notification\NotificationSucceeded;
+use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
+use YandexCheckout\Model\NotificationEventType;
+use YandexCheckout\Model\PaymentStatus;
+
 if (!$_POST) {
     die("ERROR: Empty POST");
 }
@@ -13,10 +18,11 @@ $callbackParams = $_POST;
 /** @var YandexMoneyObj $model */
 $model = $GLOBALS['YandexMoneyObject'];
 if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
-    $data = file_get_contents('php://input');
+    $data          = file_get_contents('php://input');
     $paymentMethod = new Yandex_Money();
     if (empty($data)) {
         $paymentMethod->log('notice', 'Empty body in capture notification');
+
         return;
     }
     $json = @json_decode($data, true);
@@ -24,36 +30,64 @@ if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
         if (json_last_error() === JSON_ERROR_NONE) {
             $paymentMethod->log('notice', 'Empty object in body in capture notification');
         } else {
-            $paymentMethod->log('notice', 'Invalid body in capture notification ' . json_last_error_msg());
+            $paymentMethod->log('notice', 'Invalid body in capture notification '.json_last_error_msg());
         }
+
         return;
     }
+    if ($json['event'] == NotificationEventType::PAYMENT_WAITING_FOR_CAPTURE) {
+        $notification = new NotificationWaitingForCapture($json);
+    } else {
+        $notification = new NotificationSucceeded($json);
+    }
 
-    $notification = new \YaMoney\Model\Notification\NotificationWaitingForCapture($json);
     $metadata = $notification->getObject()->getMetadata();
     if ($metadata === null || !$metadata->offsetExists('order_id')) {
         $paymentMethod->log('error', 'Empty metadata or empty order_id in metadata');
         header('HTTP/1.1 404 Order not exists');
+
         return;
     }
     $orderId = $metadata->offsetGet('order_id');
     if ($orderId > 0) {
-        $payment = $paymentMethod->getKassa()->capturePayment($notification->getObject());
-        if ($payment !== null) {
-            $statusId = (int)DEFAULT_ORDERS_STATUS_ID;
-            if (defined('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID') && MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID > 0) {
-                $statusId = (int)MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID;
+        if ($notification->getEvent() == NotificationEventType::PAYMENT_SUCCEEDED) {
+            $this->log(
+                'info',
+                'Notification succeseded init, notification body: '
+                .json_encode($json)
+            );
+            $paymentObject = $notification->getObject();
+            $payment       = $paymentMethod->getKassa()->fetchPayment($paymentObject->getId());
+            if ($payment->getStatus() == PaymentStatus::SUCCEEDED) {
+                $statusId = (int)DEFAULT_ORDERS_STATUS_ID;
+                if (defined('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID') && MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID > 0) {
+                    $statusId = (int)MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID;
+                }
+                updateOrderStatus($orderId, $payment->getAmount()->getValue(), $statusId, $payment->getId());
             }
-            updateOrderStatus($orderId, $payment->getAmount()->getValue(), $statusId, $payment->getId());
         } else {
-            header('HTTP/1.1 500 Internal server error');
+            $this->log(
+                'info',
+                'Notification waiting for capture init, notification body: '
+                .json_encode($json)
+            );
+            $payment = $paymentMethod->getKassa()->capturePayment($notification->getObject());
+            if ($payment !== null) {
+                $statusId = (int)DEFAULT_ORDERS_STATUS_ID;
+                if (defined('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID') && MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID > 0) {
+                    $statusId = (int)MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_ID;
+                }
+                updateOrderStatus($orderId, $payment->getAmount()->getValue(), $statusId, $payment->getId());
+            } else {
+                header('HTTP/1.1 500 Internal server error');
+            }
         }
     } else {
         header('HTTP/1.1 404 Order not exists');
     }
 } else {
-    $model->password = MODULE_PAYMENT_YANDEXMONEY_PASSWORD;
-    $model->shopid = MODULE_PAYMENT_YANDEXMONEY_SHOPID;
+    $model->password  = MODULE_PAYMENT_YANDEXMONEY_PASSWORD;
+    $model->shopid    = MODULE_PAYMENT_YANDEXMONEY_SHOPID;
     $model->test_mode = (MODULE_PAYMENT_YANDEXMONEY_TEST == MODULE_PAYMENT_YANDEX_MONEY_TRUE);
 
     if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE2) {
@@ -78,8 +112,8 @@ if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
 
 function updateOrderStatus($orderId, $amount, $statusId, $comment = '')
 {
-    $where = "`orders_id` = '" . tep_db_input($orderId) . "'";
-    $sql = "SELECT `orders_status` FROM `" . TABLE_ORDERS . "` WHERE {$where} LIMIT 1";
+    $where = "`orders_id` = '".tep_db_input($orderId)."'";
+    $sql   = "SELECT `orders_status` FROM `".TABLE_ORDERS."` WHERE {$where} LIMIT 1";
     $query = tep_db_query($sql);
 
     if (tep_db_num_rows($query) > 0) {
@@ -95,15 +129,15 @@ function updateOrderStatus($orderId, $amount, $statusId, $comment = '')
 
         $commentStatus = '';
         if (!empty($comment)) {
-            $commentStatus = 'Payment id ' . $comment;
+            $commentStatus = 'Payment id '.$comment;
         }
-        $commentStatus .= ' (' . number_format($amount, 2, '.', '') . ')';
+        $commentStatus .= ' ('.number_format($amount, 2, '.', '').')';
         tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, array(
-            'orders_id' => $orderId,
-            'orders_status_id' => $statusId,
-            'date_added' => 'now()',
+            'orders_id'         => $orderId,
+            'orders_status_id'  => $statusId,
+            'date_added'        => 'now()',
             'customer_notified' => '0',
-            'comments' => 'YandexMoney Verified [' . $commentStatus . ']'
+            'comments'          => 'YandexMoney Verified ['.$commentStatus.']',
         ));
     }
 }
