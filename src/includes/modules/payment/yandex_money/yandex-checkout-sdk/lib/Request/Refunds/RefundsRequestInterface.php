@@ -1,16 +1,40 @@
 <?php
 
-namespace YaMoney\Request\Refunds;
+/**
+ * The MIT License
+ *
+ * Copyright (c) 2017 NBCO Yandex.Money LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+namespace YandexCheckout\Request\Refunds;
 
 /**
  * Интерфейс объекта запроса списка возвратов
  *
- * @package YaMoney\Request\Refunds
+ * @package YandexCheckout\Request\Refunds
  *
  * @property-read string $refundId
  * @property-read string $paymentId Идентификатор платежа
  * @property-read string $accountId Идентификатор магазина
- * @property-read string $gatewayId Идентификатор товара
+ * @property-read string $gatewayId Идентификатор шлюза
  * @property-read \DateTime $createdGte Время создания, от (включительно)
  * @property-read \DateTime $createdGt Время создания, от (не включая)
  * @property-read \DateTime $createdLte Время создания, до (включительно)
@@ -61,14 +85,14 @@ interface RefundsRequestInterface
     function hasAccountId();
 
     /**
-     * Возвращает идентификатор товара
-     * @return string|null Идентификатор товара
+     * Возвращает идентификатор шлюза
+     * @return string|null Идентификатор шлюза
      */
     function getGatewayId();
 
     /**
-     * Проверяет был ли установлен идентификатор товара
-     * @return bool True если идентификатор товара был установлен, false если нет
+     * Проверяет был ли установлен идентификатор шлюза
+     * @return bool True если идентификатор шлюза был установлен, false если нет
      */
     function hasGatewayId();
 
