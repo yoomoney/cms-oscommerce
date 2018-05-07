@@ -36,6 +36,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_LABEL', 'Альфа-
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_LABEL', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_LABEL', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_LABEL', 'Яндекс.Деньги');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_INSTALLMENTS_LABEL', 'Installments');
 
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_BANK_CARD_TEXT', 'Банковские карты');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_SBERBANK_TEXT', 'Сбербанк Онлайн');
@@ -44,6 +45,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_TEXT', 'Альфа-�
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_TEXT', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_TEXT', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_TEXT', 'Яндекс.Деньги');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_INSTALLMENTS_TEXT', 'Installments (%s ₽ per month)');
 
 define('MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER_LABEL', 'Сортировка');
 define('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_LABEL', 'Статус заказа после создания');
@@ -68,9 +70,7 @@ define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_WM", "WebMoney e-wallet");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_AB", "Alfa-Click");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_SB", "Sberbank: payment by text messages or Sberbank Online");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_MA", "MasterPass");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_PB", "Promsvyazbank");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QW", "QIWI Wallet");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QP", "Trust payment (Qppi.ru)");
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'To the account of the organization with the conclusion of the contract with Yandex.Money');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'On account of the individual user Yandex.Money');

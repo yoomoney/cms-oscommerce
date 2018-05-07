@@ -36,6 +36,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_LABEL', 'Альфа-
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_LABEL', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_LABEL', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_LABEL', 'Яндекс.Деньги');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_INSTALLMENTS_LABEL', 'Заплатить по частям');
 
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_BANK_CARD_TEXT', 'Банковские карты');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_SBERBANK_TEXT', 'Сбербанк Онлайн');
@@ -44,6 +45,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_TEXT', 'Альфа-�
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_TEXT', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_TEXT', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_TEXT', 'Яндекс.Деньги');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_INSTALLMENTS_TEXT', 'Заплатить по частям (%s ₽ в месяц)');
 
 define('MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER_LABEL', 'Сортировка');
 define('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_LABEL', 'Статус заказа после создания');
@@ -68,9 +70,7 @@ define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_WM", "Кошелек WebMon
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_AB", "Альфа-Клик");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_SB", "Сбербанк: оплата по SMS или Сбербанк Онлайн");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_MA", "MasterPass");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_PB", "Интернет-банк Промсвязьбанка");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QW", "QIWI Wallet");
-define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QP", "Доверительный платеж (Куппи.ру)");
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'На расчетный счет организации с заключением договора с Яндекс.Деньгами');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'На счет физического лица в электронной валюте Яндекс.Денег');
