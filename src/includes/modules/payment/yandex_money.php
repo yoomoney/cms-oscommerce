@@ -3,12 +3,13 @@
 use YandexCheckout\Model\Confirmation\ConfirmationRedirect;
 use YandexCheckout\Model\PaymentMethodType;
 use YandexCheckout\Model\PaymentStatus;
+use YandexMoney\InstallmentsApi;
 
 define("YANDEXMONEY_WS_HTTP_CATALOG", '/');
 require_once(DIR_FS_CATALOG.'ext/modules/payment/yandex_money/yandex_money.php');
 $GLOBALS['YandexMoneyObject'] = new YandexMoneyObj();
 
-require_once(dirname(__FILE__) . '/yandex_money/autoload.php');
+require_once(dirname(__FILE__).'/yandex_money/autoload.php');
 
 class Yandex_Money
 {
@@ -17,7 +18,8 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.3';
+    const MODULE_VERSION = '1.0.4';
+    const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
     public $title;
@@ -29,18 +31,19 @@ class Yandex_Money
 
     public function __construct()
     {
-        $this->signature = 'YandexMoney|YandexMoney|' . self::MODULE_VERSION . '|' . self::MODULE_VERSION;
+        $this->signature = 'YandexMoney|YandexMoney|'.self::MODULE_VERSION.'|'.self::MODULE_VERSION;
 
-        $this->code = 'yandex_money';
-        $this->title = MODULE_PAYMENT_YANDEX_MONEY_TEXT_TITLE;
+        $this->code         = 'yandex_money';
+        $this->title        = MODULE_PAYMENT_YANDEX_MONEY_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_YANDEX_MONEY_TEXT_PUBLIC_TITLE;
-        
+
         $this->description = MODULE_PAYMENT_YANDEX_MONEY_TEXT_DESCRIPTION;
-       
-        $this->description = str_replace('{notification_url}', HTTPS_SERVER.DIR_WS_HTTPS_CATALOG.'callback.php', $this->description);
+
+        $this->description = str_replace('{notification_url}', HTTPS_SERVER.DIR_WS_HTTPS_CATALOG.'callback.php',
+            $this->description);
 
         $this->sort_order = MODULE_PAYMENT_YANDEXMONEY_SORT_ORDER;
-        $this->enabled = true;
+        $this->enabled    = true;
 
         $this->mode = self::MODE_NONE;
         if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
@@ -52,9 +55,9 @@ class Yandex_Money
         }
         $this->epl = (MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_MODE == MODULE_PAYMENT_YANDEX_MONEY_FALSE);
 
-        $GLOBALS['YandexMoneyObject']->mode = $this->mode;
+        $GLOBALS['YandexMoneyObject']->mode      = $this->mode;
         $GLOBALS['YandexMoneyObject']->test_mode = (MODULE_PAYMENT_YANDEXMONEY_TEST == MODULE_PAYMENT_YANDEX_MONEY_TRUE);
-        $GLOBALS['YandexMoneyObject']->epl = $this->epl;
+        $GLOBALS['YandexMoneyObject']->epl       = $this->epl;
 
         if ($this->mode === self::MODE_MONEY) {
             preg_match_all("'\<\!\-\-jur_start\-\-\>(.*?)\<\!\-\-jur_end\-\-\>'ims", $this->description, $res);
@@ -71,13 +74,13 @@ class Yandex_Money
 
     private function applyVersionInfo()
     {
-        $version = $this->getUpdater()->getVersionInfo();
-        $versionText = '<h4>О модуле:</h4><ul><li>Установленная версия модуля — ' . self::MODULE_VERSION . '</li>'
-            . '<li>Последняя версия модуля — ' . $version['newVersion'] . '</li>'
-            . '<li>Последняя проверка наличия новых версий — ' . $version['newVersionInfo']['date'] . '</li></ul>';
+        $version     = $this->getUpdater()->getVersionInfo();
+        $versionText = '<h4>О модуле:</h4><ul><li>Установленная версия модуля — '.self::MODULE_VERSION.'</li>'
+                       .'<li>Последняя версия модуля — '.$version['newVersion'].'</li>'
+                       .'<li>Последняя проверка наличия новых версий — '.$version['newVersionInfo']['date'].'</li></ul>';
         if ($version['new_version_available']) {
-            $versionText .= '<h4>История изменений:</h4><p>' . $version['changelog'] . '</p>'
-                . '<a href="javascript://" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-primary" id="update-module"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Обновить</span></a>';
+            $versionText .= '<h4>История изменений:</h4><p>'.$version['changelog'].'</p>'
+                            .'<a href="javascript://" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-primary" id="update-module"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Обновить</span></a>';
         } else {
             $versionText .= '<p>Установлена последняя версия модуля.</p>';
         }
@@ -85,9 +88,9 @@ class Yandex_Money
         $backups = $this->getUpdater()->getBackupList();
         if (!empty($backups)) {
             $versionText .= '<p><a id="backup-list" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary" href="javascript://"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Резервные копии ('
-                . count($backups) . ')</span></a></p><div id="backup-list-window" style="display:none;"><table><thead><tr>'
-                . '<th>Версия</th><th>Имя файла</th><th>Дата создания</th><th></th><th></th></tr></thead><tbody><tr>'
-                . '<td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
+                            .count($backups).')</span></a></p><div id="backup-list-window" style="display:none;"><table><thead><tr>'
+                            .'<th>Версия</th><th>Имя файла</th><th>Дата создания</th><th></th><th></th></tr></thead><tbody><tr>'
+                            .'<td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
         }
 
         $js = <<<JS
@@ -197,7 +200,7 @@ jQuery(document).ready(function () {
 </script>
 JS;
 
-        $this->description .= $versionText . $js;
+        $this->description .= $versionText.$js;
     }
 
     public function javascript_validation()
@@ -208,20 +211,20 @@ JS;
 
     public function selection()
     {
-        global $cart_YandexMoney_ID;
+        global $cart_YandexMoney_ID, $order;
 
         if (tep_session_is_registered('cart_YandexMoney_ID')) {
             $order_id = substr($cart_YandexMoney_ID, strpos($cart_YandexMoney_ID, '-') + 1);
 
-            $check_query = tep_db_query('select orders_id from ' . TABLE_ORDERS_STATUS_HISTORY . ' where orders_id = "' . (int) $order_id . '" limit 1');
+            $check_query = tep_db_query('select orders_id from '.TABLE_ORDERS_STATUS_HISTORY.' where orders_id = "'.(int)$order_id.'" limit 1');
 
             if (tep_db_num_rows($check_query) < 1) {
-                tep_db_query('delete from ' . TABLE_ORDERS . ' where orders_id = "' . (int) $order_id . '"');
-                tep_db_query('delete from ' . TABLE_ORDERS_TOTAL . ' where orders_id = "' . (int) $order_id . '"');
-                tep_db_query('delete from ' . TABLE_ORDERS_STATUS_HISTORY . ' where orders_id = "' . (int) $order_id . '"');
-                tep_db_query('delete from ' . TABLE_ORDERS_PRODUCTS . ' where orders_id = "' . (int) $order_id . '"');
-                tep_db_query('delete from ' . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . ' where orders_id = "' . (int) $order_id . '"');
-                tep_db_query('delete from ' . TABLE_ORDERS_PRODUCTS_DOWNLOAD . ' where orders_id = "' . (int) $order_id . '"');
+                tep_db_query('delete from '.TABLE_ORDERS.' where orders_id = "'.(int)$order_id.'"');
+                tep_db_query('delete from '.TABLE_ORDERS_TOTAL.' where orders_id = "'.(int)$order_id.'"');
+                tep_db_query('delete from '.TABLE_ORDERS_STATUS_HISTORY.' where orders_id = "'.(int)$order_id.'"');
+                tep_db_query('delete from '.TABLE_ORDERS_PRODUCTS.' where orders_id = "'.(int)$order_id.'"');
+                tep_db_query('delete from '.TABLE_ORDERS_PRODUCTS_ATTRIBUTES.' where orders_id = "'.(int)$order_id.'"');
+                tep_db_query('delete from '.TABLE_ORDERS_PRODUCTS_DOWNLOAD.' where orders_id = "'.(int)$order_id.'"');
 
                 tep_session_unregister('cart_YandexMoney_ID');
             }
@@ -236,29 +239,53 @@ JS;
                 $result = array(
                     'id'     => $this->code,
                     'module' => MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE,
-                    'fields' => array()
+                    'fields' => array(),
                 );
             } else {
                 $additional_fields = array();
-                $payment_types = array();
+                $payment_types     = array();
                 foreach (PaymentMethodType::getEnabledValues() as $value) {
-                    $const = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_' . strtoupper($value);
+                    $const = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
                     if (defined($const) && constant($const) == MODULE_PAYMENT_YANDEX_MONEY_TRUE) {
                         $const .= '_TEXT';
-                        $payment_types[] = array('id' => $value, 'text' => defined($const) ? constant($const) : $const);
+                        if ($value === PaymentMethodType::INSTALLMENTS) {
+                            $shopId = $this->getKassa()->getShopId();
+                            $amount = $order->info['total'];
+                            if (self::INSTALLMENTS_MIN_AMOUNT > $amount) {
+                                continue;
+                            }
+
+                            $monthlyInstallment = InstallmentsApi::creditPreSchedule($shopId, $amount);
+                            if (!isset($monthlyInstallment['amount'])) {
+                                $errorMessage = InstallmentsApi::getLastError() ?: 'Unknown error. Could not get installment amount';
+                                $this->log('error', $errorMessage);
+                            } else {
+                                $text             = defined($const) ? constant($const) : $const;
+                                $installmentLabel = sprintf($text,
+                                    $monthlyInstallment['amount']);
+                                $payment_types[]  = array('id' => $value, 'text' => $installmentLabel);
+
+                            }
+                        } else {
+                            $payment_types[] = array(
+                                'id'   => $value,
+                                'text' => defined($const) ? constant($const) : $const,
+                            );
+                        }
+
                         if ($value === PaymentMethodType::QIWI) {
                             $additional_fields[] = array(
                                 'title' => '',
-                                'field' => '<label for="ya-qiwi-phone">' . MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL . '</label>'
-                                    . tep_draw_input_field('ym_qiwi_phone', '', 'id="ya-qiwi-phone"')
-                                    . '<div id="ya-qiwi-phone-error" style="display: none;">' . MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION . '</div>'
+                                'field' => '<label for="ya-qiwi-phone">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL.'</label>'
+                                           .tep_draw_input_field('ym_qiwi_phone', '', 'id="ya-qiwi-phone"')
+                                           .'<div id="ya-qiwi-phone-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION.'</div>',
                             );
                         } elseif ($value === PaymentMethodType::ALFABANK) {
                             $additional_fields[] = array(
                                 'title' => '',
-                                'field' => '<label for="ya-alfa-login">' . MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_LABEL . '</label>'
-                                    . tep_draw_input_field('ym_alfa_login', '', 'id="ya-alfa-login"')
-                                    . '<div id="ya-alfa-login-error" style="display: none;">' . MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_DESCRIPTION . '</div>'
+                                'field' => '<label for="ya-alfa-login">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_LABEL.'</label>'
+                                           .tep_draw_input_field('ym_alfa_login', '', 'id="ya-alfa-login"')
+                                           .'<div id="ya-alfa-login-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_DESCRIPTION.'</div>',
                             );
                         }
                     }
@@ -268,12 +295,12 @@ JS;
                     $result = false;
                 } else {
                     $result = array(
-                        'id' => $this->code,
+                        'id'     => $this->code,
                         'module' => MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE,
                         'fields' => array(
                             array('title' => '', 'field' => MODULE_PAYMENT_YANDEX_MONEY_TEXT_PUBLIC_DESCRIPTION),
-                            array('title' => '', 'field' => tep_draw_pull_down_menu('ym_payment_type', $payment_types))
-                        )
+                            array('title' => '', 'field' => tep_draw_pull_down_menu('ym_payment_type', $payment_types)),
+                        ),
                     );
                     if (!empty($additional_fields)) {
                         $additional_fields[] = array(
@@ -332,19 +359,19 @@ jQuery(document).ready(function () {
 
                             </script>',
                         );
-                        $result['fields'] = array_merge($result['fields'], $additional_fields);
+                        $result['fields']    = array_merge($result['fields'], $additional_fields);
                     }
                 }
             }
         } else {
-            $fio = array();
+            $fio         = array();
             $customer_id = isset($_SESSION['customer_id']) ? (int)$_SESSION['customer_id'] : -1;
             if ($customer_id > 0) {
                 $customer = tep_db_query(
-                    "select customers_firstname, customers_lastname from " . TABLE_CUSTOMERS
-                    . " where customers_id = '" . $customer_id . "'"
+                    "select customers_firstname, customers_lastname from ".TABLE_CUSTOMERS
+                    ." where customers_id = '".$customer_id."'"
                 );
-                $row = tep_db_fetch_array($customer);
+                $row      = tep_db_fetch_array($customer);
                 if (!empty($row)) {
                     if (!empty($row['customers_lastname'])) {
                         $fio[] = $row['customers_lastname'];
@@ -361,9 +388,9 @@ jQuery(document).ready(function () {
                     array(
                         'title' => '',
                         'field' =>
-                            '<label for="ya-billing-fio">' . MODULE_PAYMENT_YANDEXMONEY_BILLING_FIO_LABEL . '</label>'
-                            . tep_draw_input_field('ym_billing_fio', implode(' ', $fio), 'id="ya-billing-fio"')
-                            . '<div id="ya-billing-fio-error" style="display: none;">Укажите фамилию, имя и отчество плательщика</div>'
+                            '<label for="ya-billing-fio">'.MODULE_PAYMENT_YANDEXMONEY_BILLING_FIO_LABEL.'</label>'
+                            .tep_draw_input_field('ym_billing_fio', implode(' ', $fio), 'id="ya-billing-fio"')
+                            .'<div id="ya-billing-fio-error" style="display: none;">Укажите фамилию, имя и отчество плательщика</div>',
                     ),
                     array(
                         'title' => '',
@@ -419,8 +446,9 @@ jQuery(document).ready(function () {
             }
             tep_session_register('ym_billing_fio');
             $_SESSION['ym_billing_fio'] = trim($_POST['ym_billing_fio']);
+
             return array(
-                'title' => MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE,
+                'title'  => MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE,
                 'fields' => array(
                     array(
                         'title' => MODULE_PAYMENT_YANDEXMONEY_BILLING_FIO_LABEL.':',
@@ -450,6 +478,7 @@ jQuery(document).ready(function () {
         if (isset($_POST['ym_billing_fio'])) {
             $_SESSION['ym_billing_fio'] = trim($_POST['ym_billing_fio']);
         }
+
         return '';
     }
 
@@ -459,18 +488,19 @@ jQuery(document).ready(function () {
             $this->log('debug', 'Check for return url');
             if (isset($_GET['payment_confirmation']) && $_GET['payment_confirmation'] == '1') {
                 $orderId = isset($_GET['order_id']) ? (int)$_GET['order_id'] : -1;
-                $this->log('debug', 'Check payment for order#' . $orderId);
+                $this->log('debug', 'Check payment for order#'.$orderId);
                 if ($orderId <= 0) {
                     return;
                 }
                 $paymentId = $this->getKassa()->fetchPaymentIdByOrderId($orderId);
-                $this->log('debug', 'Payment id is ' . $paymentId);
+                $this->log('debug', 'Payment id is '.$paymentId);
                 if (empty($paymentId)) {
                     return;
                 }
                 $payment = $this->getKassa()->fetchPayment($paymentId);
                 if (empty($payment)) {
-                    $this->log('warning', 'Payment with id ' . $paymentId . ' not exits');
+                    $this->log('warning', 'Payment with id '.$paymentId.' not exits');
+
                     return;
                 }
                 if ($payment->getPaid()) {
@@ -488,7 +518,7 @@ jQuery(document).ready(function () {
                     $redirectUrl = tep_href_link(FILENAME_CHECKOUT_SUCCESS);
                     tep_redirect($redirectUrl);
                 } else {
-                    $this->log('info', 'Payment with id ' . $paymentId . ' not paid');
+                    $this->log('info', 'Payment with id '.$paymentId.' not paid');
                 }
             }
         }
@@ -502,21 +532,21 @@ jQuery(document).ready(function () {
         $YandexMoneyObject = &$GLOBALS['YandexMoneyObject'];
 
         $ym_payment_type = $_SESSION['ym_payment_type'];
-        $order_id = (int)$insert_id;
+        $order_id        = (int)$insert_id;
         if ($this->mode == self::MODE_KASSA) {
-            $redirectUrl = str_replace(
+            $redirectUrl             = str_replace(
                 '&amp;',
                 '&',
                 tep_href_link(
                     FILENAME_CHECKOUT_CONFIRMATION,
-                    'payment_confirmation=1&order_id=' . $order_id,
+                    'payment_confirmation=1&order_id='.$order_id,
                     'SSL',
                     false,
                     false
                 )
             );
             $order->info['order_id'] = $order_id;
-            $payment = $this->getKassa()->createPayment($order, $ym_payment_type, $redirectUrl);
+            $payment                 = $this->getKassa()->createPayment($order, $ym_payment_type, $redirectUrl);
 
             if ($payment !== null) {
                 $confirmation = $payment->getConfirmation();
@@ -529,60 +559,60 @@ jQuery(document).ready(function () {
             tep_redirect($redirectUrl);
         } elseif ($this->mode == self::MODE_MONEY) {
             $process_button_string =
-                tep_draw_hidden_field('receiver', MODULE_PAYMENT_YANDEXMONEY_ACCOUNT) .
-                tep_draw_hidden_field('formcomment', STORE_NAME) .
-                tep_draw_hidden_field('short-dest', STORE_NAME) .
-                tep_draw_hidden_field('writable-targets', $YandexMoneyObject->writable_targets) .
-                tep_draw_hidden_field('comment-needed', $YandexMoneyObject->comment_needed) .
-                tep_draw_hidden_field('label', $order_id) .
-                tep_draw_hidden_field('quickpay-form', $YandexMoneyObject->quickpay_form) .
-                tep_draw_hidden_field('paymentType', $ym_payment_type) .
-                tep_draw_hidden_field('targets', MODULE_PAYMENT_YANDEXMONEY_ORDER_NAME.' '.$order_id) .
-                tep_draw_hidden_field('comment', $order->info['comments']) .
-                tep_draw_hidden_field('need-fio', $YandexMoneyObject->need_fio) .
-                tep_draw_hidden_field('need-email', $YandexMoneyObject->need_email) .
-                tep_draw_hidden_field('need-phone', $YandexMoneyObject->need_phone) .
-                tep_draw_hidden_field('need-address', $YandexMoneyObject->need_address)
-            ;
+                tep_draw_hidden_field('receiver', MODULE_PAYMENT_YANDEXMONEY_ACCOUNT).
+                tep_draw_hidden_field('formcomment', STORE_NAME).
+                tep_draw_hidden_field('short-dest', STORE_NAME).
+                tep_draw_hidden_field('writable-targets', $YandexMoneyObject->writable_targets).
+                tep_draw_hidden_field('comment-needed', $YandexMoneyObject->comment_needed).
+                tep_draw_hidden_field('label', $order_id).
+                tep_draw_hidden_field('quickpay-form', $YandexMoneyObject->quickpay_form).
+                tep_draw_hidden_field('paymentType', $ym_payment_type).
+                tep_draw_hidden_field('targets', MODULE_PAYMENT_YANDEXMONEY_ORDER_NAME.' '.$order_id).
+                tep_draw_hidden_field('comment', $order->info['comments']).
+                tep_draw_hidden_field('need-fio', $YandexMoneyObject->need_fio).
+                tep_draw_hidden_field('need-email', $YandexMoneyObject->need_email).
+                tep_draw_hidden_field('need-phone', $YandexMoneyObject->need_phone).
+                tep_draw_hidden_field('need-address', $YandexMoneyObject->need_address);
         } elseif ($this->mode == self::MODE_BILLING) {
 
             $sqlData = array('orders_status' => (int)MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID);
             tep_db_perform(TABLE_ORDERS, $sqlData, 'update', 'orders_id='.$order_id);
 
             $sqlData = array(
-                'orders_id' => $order_id,
-                'orders_status_id' => (int)MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID,
-                'date_added' => 'now()',
+                'orders_id'         => $order_id,
+                'orders_status_id'  => (int)MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID,
+                'date_added'        => 'now()',
                 'customer_notified' => '0',
-                'comments' => ''
+                'comments'          => '',
             );
             tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sqlData);
 
-            $fio = $_SESSION['ym_billing_fio'];
+            $fio                   = $_SESSION['ym_billing_fio'];
             $process_button_string =
-                tep_draw_hidden_field('formId', MODULE_PAYMENT_YANDEXMONEY_BILLING_ID) .
-                tep_draw_hidden_field('fio', $fio) .
-                tep_draw_hidden_field('narrative', $YandexMoneyObject->parsePlaceholders(MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE, $order_id, $order)) .
-                tep_draw_hidden_field('quickPayVersion', '2')
-            ;
+                tep_draw_hidden_field('formId', MODULE_PAYMENT_YANDEXMONEY_BILLING_ID).
+                tep_draw_hidden_field('fio', $fio).
+                tep_draw_hidden_field('narrative',
+                    $YandexMoneyObject->parsePlaceholders(MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE, $order_id,
+                        $order)).
+                tep_draw_hidden_field('quickPayVersion', '2');
         } else {
             $process_button_string = '';
         }
         if (!empty($process_button_string)) {
             $process_button_string .=
-                tep_draw_hidden_field('sum', number_format($order->info['total'], 2, '.', '')) .
-                tep_draw_hidden_field('cms_name', 'oscommerce')
-            ;
+                tep_draw_hidden_field('sum', number_format($order->info['total'], 2, '.', '')).
+                tep_draw_hidden_field('cms_name', 'oscommerce');
             echo '<form action="'.$YandexMoneyObject->getFormUrl().'" method="post" id="ym-form-submit">'
-                . $process_button_string . '</form>'
-                . '<script> document.getElementById("ym-form-submit").submit(); </script>';
+                 .$process_button_string.'</form>'
+                 .'<script> document.getElementById("ym-form-submit").submit(); </script>';
             $this->clearCart();
             exit();
         }
     }
 
     public function before_process()
-    {}
+    {
+    }
 
     private function clearCart()
     {
@@ -603,10 +633,11 @@ jQuery(document).ready(function () {
     public function check()
     {
         if (!isset($this->_check)) {
-            $check_query = tep_db_query("SELECT `configuration_value` FROM " . TABLE_CONFIGURATION
-                . " WHERE `configuration_key` = 'MODULE_PAYMENT_YANDEX_MONEY_SHOP_ID'");
+            $check_query  = tep_db_query("SELECT `configuration_value` FROM ".TABLE_CONFIGURATION
+                                         ." WHERE `configuration_key` = 'MODULE_PAYMENT_YANDEX_MONEY_SHOP_ID'");
             $this->_check = tep_db_num_rows($check_query);
         }
+
         return $this->_check;
     }
 
@@ -623,20 +654,21 @@ jQuery(document).ready(function () {
                 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_MODE',
             );
             foreach (PaymentMethodType::getEnabledValues() as $value) {
-                $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_' . strtoupper($value);
+                $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
             }
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER';
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS';
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_SEND_RECEIPT';
 
-            $sql = "SELECT r.tax_rates_id FROM " . TABLE_TAX_CLASS . " tc, " . TABLE_TAX_RATES . " r LEFT JOIN "
-                . TABLE_GEO_ZONES . " z on r.tax_zone_id = z.geo_zone_id WHERE r.tax_class_id = tc.tax_class_id";
+            $sql     = "SELECT r.tax_rates_id FROM ".TABLE_TAX_CLASS." tc, ".TABLE_TAX_RATES." r LEFT JOIN "
+                       .TABLE_GEO_ZONES." z on r.tax_zone_id = z.geo_zone_id WHERE r.tax_class_id = tc.tax_class_id";
             $dataSet = tep_db_query($sql);
             while ($taxRate = tep_db_fetch_array($dataSet)) {
-                $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_TAXES_' . $taxRate['tax_rates_id'];
+                $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_TAXES_'.$taxRate['tax_rates_id'];
             }
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE';
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_ENABLE_LOG';
+
             return $array;
         } elseif ($this->mode === self::MODE_MONEY) {
             return array(
@@ -665,20 +697,20 @@ jQuery(document).ready(function () {
             return;
         }
 
-        $dirName = dirname(__FILE__) . '/yandex_money/logs';
+        $dirName = dirname(__FILE__).'/yandex_money/logs';
         if (!file_exists($dirName)) {
             mkdir($dirName);
         }
-        $fileName = $dirName . '/log.log';
-        $fd = @fopen($fileName, 'a');
+        $fileName = $dirName.'/log.log';
+        $fd       = @fopen($fileName, 'a');
         if (!$fd) {
             return;
         }
         flock($fd, LOCK_EX);
 
-        $userId = isset($_SESSION['customer_id']) ? (int)$_SESSION['customer_id'] : -1;
-        $message = date(DATE_ATOM) . ' - [' . $level . '] [' . $userId . '] [' . session_id() . '] - ' . $message;
-        fwrite($fd, $message . "\r\n");
+        $userId  = isset($_SESSION['customer_id']) ? (int)$_SESSION['customer_id'] : -1;
+        $message = date(DATE_ATOM).' - ['.$level.'] ['.$userId.'] ['.session_id().'] - '.$message;
+        fwrite($fd, $message."\r\n");
 
         flock($fd, LOCK_UN);
         fclose($fd);
@@ -688,15 +720,16 @@ jQuery(document).ready(function () {
     {
         global $cfgModules, $language;
         $module_language_directory = $cfgModules->get('payment', 'language_directory');
-        $in = include_once($module_language_directory.$language."/modules/payment/yandex_money.php");
+        $in                        = include_once($module_language_directory.$language."/modules/payment/yandex_money.php");
 
         if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
             $installer = new \YandexMoney\Installer();
             $installer->install();
+
             return;
         }
 
-         $r = tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_TEST_LANG."', 
             'MODULE_PAYMENT_YANDEXMONEY_TEST', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
@@ -704,21 +737,21 @@ jQuery(document).ready(function () {
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'), ', now())"
         );
 
-        $r = tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_STATUS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_STATUS', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
             '', 
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'), ', now())"
         );
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_ACCEPT_YANDEXMONEY_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_ACCEPT_YANDEXMONEY', 
            '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
             '', 
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'),', now())"
         );
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_ACCEPT_CARDS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_ACCEPT_CARDS', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
@@ -726,14 +759,14 @@ jQuery(document).ready(function () {
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'),', now())"
         );
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
         '".MODULE_PAYMENT_YANDEXMONEY_ACCOUNT_LNG."',
         'MODULE_PAYMENT_YANDEXMONEY_ACCOUNT', 
         '', 
          '".MODULE_PAYMENT_YANDEXMONEY_ONLY_IND_LNG."', 
         '6', '0', now())");
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_PASSWORD_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_PASSWORD', 
             '', 
@@ -741,13 +774,13 @@ jQuery(document).ready(function () {
             '6', '0', now())");
 
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_SORT_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_SORT_ORDER', 
             '0', 
             '".MODULE_PAYMENT_YANDEXMONEY_SORT2_LNG."', 
             '6', '0', now())");
-        $r = tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
+        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_ORDER_STATUS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_ORDER_STATUS_ID', 
             '".$payed_status_id."', 
@@ -757,7 +790,7 @@ jQuery(document).ready(function () {
 
         /** Птатёжка */
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_BILLING_STATUS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_BILLING_STATUS', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
@@ -765,7 +798,7 @@ jQuery(document).ready(function () {
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'),', now())"
         );
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_BILLING_ID_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_BILLING_ID', 
             '', 
@@ -773,7 +806,7 @@ jQuery(document).ready(function () {
             '6', '0', now())"
         );
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE', 
             '".MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DEF_LNG."', 
@@ -781,7 +814,7 @@ jQuery(document).ready(function () {
             '6', '0', now())"
         );
 
-        tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID', 
             '2', 
@@ -797,53 +830,62 @@ jQuery(document).ready(function () {
             $installer->uninstall();
         }
         tep_db_query(
-            'DELETE FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_key` IN (\'' . implode("', '", $this->keys()) . "')"
+            'DELETE FROM '.TABLE_CONFIGURATION.' WHERE `configuration_key` IN (\''.implode("', '", $this->keys())."')"
         );
     }
 
-    function tep_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true)
-    {
+    function tep_href_link(
+        $page = '',
+        $parameters = '',
+        $connection = 'NONSSL',
+        $add_session_id = true,
+        $search_engine_safe = true
+    ) {
         global $request_type, $session_started, $SID;
-    
+
         if (!tep_not_null($page)) {
             exit;
         }
 
         if ($connection == 'NONSSL') {
-            $link = HTTP_SERVER . YANDEXMONEY_WS_HTTP_CATALOG;
+            $link = HTTP_SERVER.YANDEXMONEY_WS_HTTP_CATALOG;
         } elseif ($connection == 'SSL') {
             if (ENABLE_SSL === true) {
-                $link = HTTPS_SERVER . YANDEXMONEY_WS_HTTP_CATALOG;
+                $link = HTTPS_SERVER.YANDEXMONEY_WS_HTTP_CATALOG;
             } else {
-                $link = HTTP_SERVER . YANDEXMONEY_WS_HTTP_CATALOG;
+                $link = HTTP_SERVER.YANDEXMONEY_WS_HTTP_CATALOG;
             }
         } else {
             exit;
         }
 
         if (tep_not_null($parameters)) {
-            $link .= $page . '?' . tep_output_string($parameters);
+            $link      .= $page.'?'.tep_output_string($parameters);
             $separator = '&';
         } else {
-            $link .= $page;
+            $link      .= $page;
             $separator = '?';
         }
-    
-        while ((substr($link, -1) == '&') || (substr($link, -1) == '?')) $link = substr($link, 0, -1);
-    
+
+        while ((substr($link, -1) == '&') || (substr($link, -1) == '?')) {
+            $link = substr($link, 0, -1);
+        }
+
         // Add the session ID when moving from different HTTP and HTTPS servers, or when SID is defined
         if (($add_session_id == true) && ($session_started == true) && (SESSION_FORCE_COOKIE_USE == 'False')) {
             if (tep_not_null($SID)) {
                 $_sid = $SID;
-            } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == true) ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
+            } elseif ((($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == true)) || (($request_type == 'SSL') && ($connection == 'NONSSL'))) {
                 if (HTTP_COOKIE_DOMAIN != HTTPS_COOKIE_DOMAIN) {
-                    $_sid = tep_session_name() . '=' . tep_session_id();
+                    $_sid = tep_session_name().'='.tep_session_id();
                 }
             }
         }
-    
-        if ( (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
-            while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
+
+        if ((SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true)) {
+            while (strstr($link, '&&')) {
+                $link = str_replace('&&', '&', $link);
+            }
 
             $link = str_replace('?', '/', $link);
             $link = str_replace('&', '/', $link);
@@ -851,11 +893,11 @@ jQuery(document).ready(function () {
 
             $separator = '?';
         }
-    
+
         if (isset($_sid)) {
-            $link .= $separator . $_sid;
+            $link .= $separator.$_sid;
         }
-   
+
         return $link;
     }
 
@@ -872,6 +914,7 @@ jQuery(document).ready(function () {
         if ($this->kassaPaymentMethod === null) {
             $this->kassaPaymentMethod = new \YandexMoney\PaymentMethod\KassaPaymentMethod($this);
         }
+
         return $this->kassaPaymentMethod;
     }
 
@@ -882,13 +925,14 @@ jQuery(document).ready(function () {
         if ($this->updaterModule === null) {
             $this->updaterModule = new \YandexMoney\Updater($this);
         }
+
         return $this->updaterModule;
     }
 }
 
 function get_options_taxes($id = 1, $default)
 {
-    return tep_draw_pull_down_menu('configuration[MODULE_PAYMENT_YANDEX_MONEY_TAXES_' . $id . ']', getTaxRetes(), $default);
+    return tep_draw_pull_down_menu('configuration[MODULE_PAYMENT_YANDEX_MONEY_TAXES_'.$id.']', getTaxRetes(), $default);
 }
 
 function getTaxRetes()
