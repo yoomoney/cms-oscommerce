@@ -18,7 +18,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.4';
+    const MODULE_VERSION = '1.0.5';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
@@ -652,6 +652,7 @@ jQuery(document).ready(function () {
                 'MODULE_PAYMENT_YANDEX_MONEY_SHOP_ID',
                 'MODULE_PAYMENT_YANDEX_MONEY_SHOP_PASSWORD',
                 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_MODE',
+                'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION',
             );
             foreach (PaymentMethodType::getEnabledValues() as $value) {
                 $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
@@ -720,7 +721,7 @@ jQuery(document).ready(function () {
     {
         global $cfgModules, $language;
         $module_language_directory = $cfgModules->get('payment', 'language_directory');
-        $in                        = include_once($module_language_directory.$language."/modules/payment/yandex_money.php");
+        include_once($module_language_directory.$language."/modules/payment/yandex_money.php");
 
         if (MODULE_PAYMENT_YANDEXMONEY_MODE == MODULE_PAYMENT_YANDEXMONEY_MODE1) {
             $installer = new \YandexMoney\Installer();
@@ -729,7 +730,7 @@ jQuery(document).ready(function () {
             return;
         }
 
-        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_TEST_LANG."', 
             'MODULE_PAYMENT_YANDEXMONEY_TEST', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
@@ -737,7 +738,7 @@ jQuery(document).ready(function () {
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YANDEX_MONEY_TRUE."\', \'".MODULE_PAYMENT_YANDEX_MONEY_FALSE."\'), ', now())"
         );
 
-        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_STATUS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_STATUS', 
             '".MODULE_PAYMENT_YANDEX_MONEY_TRUE."', 
@@ -780,10 +781,10 @@ jQuery(document).ready(function () {
             '0', 
             '".MODULE_PAYMENT_YANDEXMONEY_SORT2_LNG."', 
             '6', '0', now())");
-        $r = tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
+        tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
             '".MODULE_PAYMENT_YANDEXMONEY_ORDER_STATUS_LNG."', 
             'MODULE_PAYMENT_YANDEXMONEY_ORDER_STATUS_ID', 
-            '".$payed_status_id."', 
+            '', 
             '', 
             '6', '0', 'tep_cfg_pull_down_order_statuses(', 'tep_get_order_status_name', now())");
 

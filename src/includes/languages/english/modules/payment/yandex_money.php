@@ -54,7 +54,11 @@ define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_LABEL', 'Название пл
 define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_DESCRIPTION', 'Это название увидит пользователь');
 define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_DEFAULT_VALUE', 'Яндекс.Касса (банковские карты, электронные деньги и другое)');
 define('MODULE_PAYMENT_YANDEX_MONEY_ENABLE_LOG_LABEL', 'Debug log');
-define('MODULE_PAYMENT_YANDEX_MONEY_ENABLE_LOG_DESCRIPTION', 'одробное логгирование процесса проведения оплаты');
+define('MODULE_PAYMENT_YANDEX_MONEY_ENABLE_LOG_DESCRIPTION', 'Подробное логгирование процесса проведения оплаты');
+
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_LABEL_LNG', 'Transaction data');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_DESC_LNG', 'Full description of the transaction that the user will see during the checkout process. You can find it in your Yandex.Checkout Merchant Profile. For example, "Payment for order No. 72 by user@yandex.ru". Limitations: no more than 128 symbols.');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_DEFAULT_LNG', 'Payment for order No. %order_id%');
 
 define('MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL', 'Телефон, который привязан к Qiwi Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION', 'Укажите телефон');

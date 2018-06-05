@@ -61,6 +61,13 @@ class Installer
         );
 
         $result[] = array(
+            'name' => 'PAYMENT_DESCRIPTION',
+            'label' => MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_LABEL_LNG,
+            'description' => MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_DESC_LNG,
+            'defaultValue' => MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_DEFAULT_LNG,
+        );
+
+        $result[] = array(
             'name' => 'ENABLE_LOG',
             'function' => "tep_cfg_select_option(array('".$this->getValue('true')."','".$this->getValue('false')."'),",
             'defaultValue' => $this->getValue('false'),
