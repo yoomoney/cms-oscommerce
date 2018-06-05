@@ -4,6 +4,7 @@ namespace YandexMoney\PaymentMethod;
 
 use YandexCheckout\Client;
 use YandexCheckout\Model\ConfirmationType;
+use YandexCheckout\Model\Payment;
 use YandexCheckout\Model\PaymentInterface;
 use YandexCheckout\Model\PaymentMethodType;
 use YandexCheckout\Model\PaymentStatus;
@@ -58,7 +59,8 @@ class KassaPaymentMethod
         try {
             $builder = CreatePaymentRequest::builder();
             $builder->setAmount($order->info['total'])
-                    ->setCapture(true);
+                    ->setCapture(true)
+                    ->setDescription($this->createDescription($order));
             $confirmation = array(
                 'type'      => ConfirmationType::REDIRECT,
                 'returnUrl' => $returnUrl,
@@ -209,8 +211,10 @@ class KassaPaymentMethod
             $id              = str_replace('MODULE_PAYMENT_YANDEXMONEY_TAXES_', '', $rows['configuration_key']);
             $taxes[(int)$id] = $rows['configuration_value'];
         }
-        $builder->setReceiptEmail($order->customer['email_address'])
-                ->setTaxSystemCode(1);
+        $defaultTaxRate = defined('MODULE_PAYMENT_YANDEX_MONEY_TAXES_1')
+            ? MODULE_PAYMENT_YANDEX_MONEY_TAXES_1
+            : 1;
+        $builder->setReceiptEmail($order->customer['email_address']);
 
         foreach ($order->products as $product) {
             $tax_query = tep_db_query("
@@ -237,15 +241,15 @@ GROUP BY tr.tax_priority"
                     $taxId = $taxes[$tax['tax_rates_id']];
                     $builder->addReceiptItem($product['name'], $product['final_price'], $product['qty'], $taxId);
                 } else {
-                    $builder->addReceiptItem($product['name'], $product['final_price'], $product['qty']);
+                    $builder->addReceiptItem($product['name'], $product['final_price'], $product['qty'], $defaultTaxRate);
                 }
             } else {
-                $builder->addReceiptItem($product['name'], $product['final_price'], $product['qty']);
+                $builder->addReceiptItem($product['name'], $product['final_price'], $product['qty'], $defaultTaxRate);
             }
         }
 
         if ($order->info && $order->info['shipping_cost'] > 0) {
-            $builder->addReceiptShipping('Доставка - '.$order->info['shipping_method'], $order->info['shipping_cost']);
+            $builder->addReceiptShipping('Доставка - '.$order->info['shipping_method'], $order->info['shipping_cost'], $defaultTaxRate);
         }
     }
 
@@ -266,5 +270,27 @@ GROUP BY tr.tax_priority"
         }
 
         return $this->client;
+    }
+
+    /**
+     * @param $order
+     * @return string
+     */
+    private function createDescription($order)
+    {
+        $descriptionTemplate = defined('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION')
+            ? MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION
+            : MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION_DEFAULT_LNG;
+
+        $replace = array();
+        foreach ($order->info as $key => $value) {
+            if (is_scalar($value)) {
+                $replace['%'.$key.'%'] = $value;
+            }
+        }
+
+        $description = strtr($descriptionTemplate, $replace);
+
+        return (string)mb_substr($description, 0, Payment::MAX_LENGTH_DESCRIPTION);
     }
 }
