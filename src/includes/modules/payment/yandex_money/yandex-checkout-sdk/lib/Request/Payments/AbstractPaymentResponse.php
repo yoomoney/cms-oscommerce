@@ -27,6 +27,8 @@
 namespace YandexCheckout\Request\Payments;
 
 use YandexCheckout\Model\AmountInterface;
+use YandexCheckout\Model\AuthorizationDetails;
+use YandexCheckout\Model\CancellationDetails;
 use YandexCheckout\Model\Confirmation\ConfirmationRedirect;
 use YandexCheckout\Model\Confirmation\ConfirmationExternal;
 use YandexCheckout\Model\ConfirmationType;
@@ -47,6 +49,7 @@ abstract class AbstractPaymentResponse extends Payment implements PaymentInterfa
 {
     /**
      * Конструктор, устанавливает настройки платежа из ассоциативного массива
+     *
      * @param array $paymentInfo Массив с информацией о платеже, пришедший от API
      */
     public function __construct($paymentInfo)
@@ -56,8 +59,15 @@ abstract class AbstractPaymentResponse extends Payment implements PaymentInterfa
         $this->setAmount($this->factoryAmount($paymentInfo['amount']));
         $this->setCreatedAt($paymentInfo['created_at']);
         $this->setPaid($paymentInfo['paid']);
+        if(!empty($paymentInfo['test'])) {
+            $this->setTest($paymentInfo['test']);
+        }
         if (!empty($paymentInfo['payment_method'])) {
             $this->setPaymentMethod($this->factoryPaymentMethod($paymentInfo['payment_method']));
+        }
+
+        if (!empty($paymentInfo['description'])) {
+            $this->setDescription($paymentInfo['description']);
         }
 
         if (!empty($paymentInfo['recipient'])) {
@@ -102,22 +112,39 @@ abstract class AbstractPaymentResponse extends Payment implements PaymentInterfa
             }
             $this->setMetadata($metadata);
         }
+        if (!empty($paymentInfo['cancellation_details'])) {
+            $cancellationDetails = $paymentInfo['cancellation_details'];
+            $party               = isset($cancellationDetails['party']) ? $cancellationDetails['party'] : null;
+            $reason              = isset($cancellationDetails['reason']) ? $cancellationDetails['reason'] : null;
+            $this->setCancellationDetails(new CancellationDetails($party, $reason));
+        }
+        if (!empty($paymentInfo['authorization_details'])) {
+            $authorizationDetails = $paymentInfo['authorization_details'];
+            $rrn                  = isset($authorizationDetails['rrn']) ? $authorizationDetails['rrn'] : null;
+            $authCode             = isset($authorizationDetails['auth_code']) ? $authorizationDetails['auth_code'] : null;
+            $this->setAuthorizationDetails(new AuthorizationDetails($rrn, $authCode));
+        }
     }
 
     /**
      * Фабричный метод для создания способа оплаты
+     *
      * @param array $options Настройки способа оплаты в массиве
+     *
      * @return AbstractPaymentMethod Инстанс способа оплаты нужного типа
      */
     private function factoryPaymentMethod($options)
     {
         $factory = new PaymentMethodFactory();
+
         return $factory->factoryFromArray($options);
     }
 
     /**
      * Фабричный метод создания суммы
+     *
      * @param array $options Сумма в виде ассоциативного массива
+     *
      * @return AmountInterface Созданный инстанс суммы
      */
     private function factoryAmount($options)
@@ -126,6 +153,7 @@ abstract class AbstractPaymentResponse extends Payment implements PaymentInterfa
         if ($options['value'] > 0) {
             $amount->setValue($options['value']);
         }
+
         return $amount;
     }
 }

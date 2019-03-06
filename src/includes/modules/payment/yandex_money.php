@@ -18,7 +18,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.5';
+    const MODULE_VERSION = '1.0.6';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
@@ -245,48 +245,50 @@ JS;
                 $additional_fields = array();
                 $payment_types     = array();
                 foreach (PaymentMethodType::getEnabledValues() as $value) {
-                    $const = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
-                    if (defined($const) && constant($const) == MODULE_PAYMENT_YANDEX_MONEY_TRUE) {
-                        $const .= '_TEXT';
-                        if ($value === PaymentMethodType::INSTALLMENTS) {
-                            $shopId = $this->getKassa()->getShopId();
-                            $amount = $order->info['total'];
-                            if (self::INSTALLMENTS_MIN_AMOUNT > $amount) {
-                                continue;
-                            }
+                    if ($value !== PaymentMethodType::B2B_SBERBANK) {
+                        $const = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
+                        if (defined($const) && constant($const) == MODULE_PAYMENT_YANDEX_MONEY_TRUE) {
+                            $const .= '_TEXT';
+                            if ($value === PaymentMethodType::INSTALLMENTS) {
+                                $shopId = $this->getKassa()->getShopId();
+                                $amount = $order->info['total'];
+                                if (self::INSTALLMENTS_MIN_AMOUNT > $amount) {
+                                    continue;
+                                }
 
-                            $monthlyInstallment = InstallmentsApi::creditPreSchedule($shopId, $amount);
-                            if (!isset($monthlyInstallment['amount'])) {
-                                $errorMessage = InstallmentsApi::getLastError() ?: 'Unknown error. Could not get installment amount';
-                                $this->log('error', $errorMessage);
+                                $monthlyInstallment = InstallmentsApi::creditPreSchedule($shopId, $amount);
+                                if (!isset($monthlyInstallment['amount'])) {
+                                    $errorMessage = InstallmentsApi::getLastError() ?: 'Unknown error. Could not get installment amount';
+                                    $this->log('error', $errorMessage);
+                                } else {
+                                    $text             = defined($const) ? constant($const) : $const;
+                                    $installmentLabel = sprintf($text,
+                                        $monthlyInstallment['amount']);
+                                    $payment_types[]  = array('id' => $value, 'text' => $installmentLabel);
+
+                                }
                             } else {
-                                $text             = defined($const) ? constant($const) : $const;
-                                $installmentLabel = sprintf($text,
-                                    $monthlyInstallment['amount']);
-                                $payment_types[]  = array('id' => $value, 'text' => $installmentLabel);
-
+                                $payment_types[] = array(
+                                    'id'   => $value,
+                                    'text' => defined($const) ? constant($const) : $const,
+                                );
                             }
-                        } else {
-                            $payment_types[] = array(
-                                'id'   => $value,
-                                'text' => defined($const) ? constant($const) : $const,
-                            );
-                        }
 
-                        if ($value === PaymentMethodType::QIWI) {
-                            $additional_fields[] = array(
-                                'title' => '',
-                                'field' => '<label for="ya-qiwi-phone">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL.'</label>'
-                                           .tep_draw_input_field('ym_qiwi_phone', '', 'id="ya-qiwi-phone"')
-                                           .'<div id="ya-qiwi-phone-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION.'</div>',
-                            );
-                        } elseif ($value === PaymentMethodType::ALFABANK) {
-                            $additional_fields[] = array(
-                                'title' => '',
-                                'field' => '<label for="ya-alfa-login">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_LABEL.'</label>'
-                                           .tep_draw_input_field('ym_alfa_login', '', 'id="ya-alfa-login"')
-                                           .'<div id="ya-alfa-login-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_DESCRIPTION.'</div>',
-                            );
+                            if ($value === PaymentMethodType::QIWI) {
+                                $additional_fields[] = array(
+                                    'title' => '',
+                                    'field' => '<label for="ya-qiwi-phone">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_LABEL.'</label>'
+                                               .tep_draw_input_field('ym_qiwi_phone', '', 'id="ya-qiwi-phone"')
+                                               .'<div id="ya-qiwi-phone-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_QIWI_PHONE_DESCRIPTION.'</div>',
+                                );
+                            } elseif ($value === PaymentMethodType::ALFABANK) {
+                                $additional_fields[] = array(
+                                    'title' => '',
+                                    'field' => '<label for="ya-alfa-login">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_LABEL.'</label>'
+                                               .tep_draw_input_field('ym_alfa_login', '', 'id="ya-alfa-login"')
+                                               .'<div id="ya-alfa-login-error" style="display: none;">'.MODULE_PAYMENT_YANDEX_MONEY_ALFA_LOGIN_DESCRIPTION.'</div>',
+                                );
+                            }
                         }
                     }
                 }
@@ -655,7 +657,9 @@ jQuery(document).ready(function () {
                 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_DESCRIPTION',
             );
             foreach (PaymentMethodType::getEnabledValues() as $value) {
-                $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
+                if ($value !== PaymentMethodType::B2B_SBERBANK) {
+                    $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_'.strtoupper($value);
+                }
             }
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER';
             $array[] = 'MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS';
