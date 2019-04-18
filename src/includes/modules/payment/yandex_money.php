@@ -18,7 +18,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.6';
+    const MODULE_VERSION = '1.0.7';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
@@ -937,25 +937,25 @@ jQuery(document).ready(function () {
 
 function get_options_taxes($id = 1, $default)
 {
-    return tep_draw_pull_down_menu('configuration[MODULE_PAYMENT_YANDEX_MONEY_TAXES_'.$id.']', getTaxRetes(), $default);
+    return tep_draw_pull_down_menu('configuration[MODULE_PAYMENT_YANDEX_MONEY_TAXES_'.$id.']', getTaxRates(), $default);
 }
 
-function getTaxRetes()
+function getTaxRates()
 {
     return array(
-        array('id' => 1, 'text' => 'Без НДС'),
-        array('id' => 2, 'text' => '0%'),
-        array('id' => 3, 'text' => '10%'),
-        array('id' => 4, 'text' => '18%'),
-        array('id' => 5, 'text' => 'Рассчётная ставка 11/110'),
-        array('id' => 6, 'text' => 'Рассчётная ставка 18/118'),
+        array('id' => 1, 'text' => MODULE_PAYMENT_YANDEXMONEY_WITHOUT_VAT_LNG),
+        array('id' => 2, 'text' => MODULE_PAYMENT_YANDEXMONEY_VAT_0_LNG),
+        array('id' => 3, 'text' => MODULE_PAYMENT_YANDEXMONEY_VAT_10_LNG),
+        array('id' => 4, 'text' => MODULE_PAYMENT_YANDEXMONEY_VAT_20_LNG),
+        array('id' => 5, 'text' => MODULE_PAYMENT_YANDEXMONEY_VAT_10_110_LNG),
+        array('id' => 6, 'text' => MODULE_PAYMENT_YANDEXMONEY_VAT_20_120_LNG),
     );
 }
 
 function get_setted_taxes($id)
 {
     $taxes = array();
-    foreach (getTaxRetes() as $tax) {
+    foreach (getTaxRates() as $tax) {
         $taxes[$tax['id']] = $tax['text'];
     }
     if (isset($taxes[$id])) {

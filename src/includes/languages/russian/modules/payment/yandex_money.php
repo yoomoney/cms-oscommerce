@@ -33,6 +33,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_BANK_CARD_LABEL', 'Банко
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_SBERBANK_LABEL', 'Сбербанк Онлайн');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_WEBMONEY_LABEL', 'Webmoney');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_LABEL', 'Альфа-Клик');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_TINKOFF_BANK_LABEL', 'Интернет-банк Тинькофф');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_LABEL', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_LABEL', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_LABEL', 'Яндекс.Деньги');
@@ -42,6 +43,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_BANK_CARD_TEXT', 'Банко�
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_SBERBANK_TEXT', 'Сбербанк Онлайн');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_WEBMONEY_TEXT', 'Webmoney');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_ALFABANK_TEXT', 'Альфа-Клик');
+define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_TINKOFF_BANK_TEXT', 'Интернет-банк Тинькофф');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_QIWI_TEXT', 'QIWI Wallet');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_CASH_TEXT', 'Оплата наличными через терминалы');
 define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_YANDEX_MONEY_TEXT', 'Яндекс.Деньги');
@@ -49,7 +51,7 @@ define('MODULE_PAYMENT_YANDEX_MONEY_PAYMENT_METHOD_INSTALLMENTS_TEXT', 'Запл
 
 define('MODULE_PAYMENT_YANDEX_MONEY_SORT_ORDER_LABEL', 'Сортировка');
 define('MODULE_PAYMENT_YANDEX_MONEY_ORDER_STATUS_LABEL', 'Статус заказа после создания');
-define('MODULE_PAYMENT_YANDEX_MONEY_SEND_RECEIPT_LABEL', 'Отправлять данные чеков');
+define('MODULE_PAYMENT_YANDEX_MONEY_SEND_RECEIPT_LABEL', 'Отправлять в Яндекс.Кассу данные для чеков (54-ФЗ)');
 define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_LABEL', 'Название платежного сервиса');
 define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_DESCRIPTION', 'Это название увидит пользователь');
 define('MODULE_PAYMENT_YANDEX_MONEY_DISPLAY_TITLE_DEFAULT_VALUE', 'Яндекс.Касса (банковские карты, электронные деньги и другое)');
@@ -75,6 +77,13 @@ define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_AB", "Альфа-Клик")
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_SB", "Сбербанк: оплата по SMS или Сбербанк Онлайн");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_MA", "MasterPass");
 define("MODULE_PAYMENT_YANDEXMONEY_TEXT_PAYMENT_TYPE_QW", "QIWI Wallet");
+
+define('MODULE_PAYMENT_YANDEXMONEY_WITHOUT_VAT_LNG', 'Без НДС');
+define('MODULE_PAYMENT_YANDEXMONEY_VAT_0_LNG', '0%');
+define('MODULE_PAYMENT_YANDEXMONEY_VAT_10_LNG', '10%');
+define('MODULE_PAYMENT_YANDEXMONEY_VAT_20_LNG', '20%');
+define('MODULE_PAYMENT_YANDEXMONEY_VAT_10_110_LNG', 'Расчетная ставка 10/110');
+define('MODULE_PAYMENT_YANDEXMONEY_VAT_20_120_LNG', 'Расчетная ставка 20/120');
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'На расчетный счет организации с заключением договора с Яндекс.Деньгами');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'На счет физического лица в электронной валюте Яндекс.Денег');
