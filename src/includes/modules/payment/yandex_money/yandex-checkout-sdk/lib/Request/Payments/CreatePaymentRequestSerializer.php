@@ -27,6 +27,8 @@
 namespace YandexCheckout\Request\Payments;
 
 use YandexCheckout\Model\AmountInterface;
+use YandexCheckout\Model\ConfirmationAttributes\AbstractConfirmationAttributes;
+use YandexCheckout\Model\ConfirmationAttributes\ConfirmationAttributesRedirect;
 use YandexCheckout\Model\ConfirmationType;
 use YandexCheckout\Model\LegInterface;
 use YandexCheckout\Model\PassengerInterface;
@@ -38,7 +40,9 @@ use YandexCheckout\Model\PaymentData\PaymentDataGooglePay;
 use YandexCheckout\Model\PaymentData\PaymentDataSberbank;
 use YandexCheckout\Model\PaymentData\PaymentDataYandexWallet;
 use YandexCheckout\Model\PaymentMethodType;
+use YandexCheckout\Model\ReceiptInterface;
 use YandexCheckout\Model\ReceiptItem;
+use YandexCheckout\Model\TransferInterface;
 
 /**
  * Класс сериалайзера объекта запроса к API на проведение платежа
@@ -67,55 +71,29 @@ class CreatePaymentRequestSerializer
         PaymentMethodType::MOBILE_BALANCE => 'serializePaymentDataMobilePhone',
         PaymentMethodType::INSTALLMENTS   => 'serializePaymentData',
         PaymentMethodType::B2B_SBERBANK   => 'serializePaymentDataB2BSberbank',
-        PaymentMethodType::TINKOFF_BANK   => 'serializePaymentData'
+        PaymentMethodType::TINKOFF_BANK   => 'serializePaymentData',
+        PaymentMethodType::WECHAT         => 'serializePaymentData',
     );
 
     public function serialize(CreatePaymentRequestInterface $request)
     {
-        $result = array(
-            'amount' => $this->serializeAmount($request->getAmount()),
-        );
+        $result = array();
+
+        if ($request->getAmount()->getValue() > 0) {
+            $result['amount'] = $this->serializeAmount($request->getAmount());
+        }
+
+        if ($request->hasTransfers()) {
+            $result['transfers'] = $this->serializeTransfers($request->getTransfers());
+        }
+
         if ($request->hasDescription()) {
             $result['description'] = $request->getDescription();
         }
         if ($request->hasReceipt()) {
             $receipt = $request->getReceipt();
             if ($receipt->notEmpty()) {
-                $result['receipt'] = array();
-                /** @var ReceiptItem $item */
-                foreach ($receipt->getItems() as $item) {
-                    $itemArray = array(
-                        'description'     => $item->getDescription(),
-                        'amount'          => array(
-                            'value'    => $item->getPrice()->getValue(),
-                            'currency' => $item->getPrice()->getCurrency(),
-                        ),
-                        'quantity'        => $item->getQuantity(),
-                        'vat_code'        => $item->getVatCode(),
-                    );
-
-                    if ($item->getPaymentSubject()) {
-                        $itemArray['payment_subject'] = $item->getPaymentSubject();
-                    }
-
-                    if ($item->getPaymentMode()) {
-                        $itemArray['payment_mode'] = $item->getPaymentMode();
-                    }
-
-                    $result['receipt']['items'][] = $itemArray;
-                }
-                $value = $receipt->getEmail();
-                if (!empty($value)) {
-                    $result['receipt']['email'] = $value;
-                }
-                $value = $receipt->getPhone();
-                if (!empty($value)) {
-                    $result['receipt']['phone'] = $value;
-                }
-                $value = $receipt->getTaxSystemCode();
-                if (!empty($value)) {
-                    $result['receipt']['tax_system_code'] = $value;
-                }
+                $result['receipt'] = $this->serializeReceipt($receipt);
             }
         }
         if ($request->hasRecipient()) {
@@ -127,16 +105,8 @@ class CreatePaymentRequestSerializer
             $result['payment_method_data'] = $this->{$method}($request->getPaymentMethodData());
         }
         if ($request->hasConfirmation()) {
-            $result['confirmation'] = array(
-                'type' => $request->getConfirmation()->getType(),
-            );
             $confirmation           = $request->getConfirmation();
-            if ($confirmation->getType() === ConfirmationType::REDIRECT) {
-                if ($confirmation->getEnforce()) {
-                    $result['confirmation']['enforce'] = $confirmation->getEnforce();
-                }
-                $result['confirmation']['return_url'] = $confirmation->getReturnUrl();
-            }
+            $result['confirmation'] = $this->serializeConfirmation($confirmation);
         }
         if ($request->hasMetadata()) {
             $result['metadata'] = $request->getMetadata()->toArray();
@@ -183,6 +153,47 @@ class CreatePaymentRequestSerializer
             if (!empty($value)) {
                 $result[$name] = $value;
             }
+        }
+
+        return $result;
+    }
+
+    private function serializeConfirmation(AbstractConfirmationAttributes $confirmation)
+    {
+        $result = array(
+            'type' => $confirmation->getType(),
+        );
+        if ($locale = $confirmation->getLocale()) {
+            $result['locale'] = $locale;
+        }
+        if ($confirmation->getType() === ConfirmationType::REDIRECT) {
+            /** @var ConfirmationAttributesRedirect $confirmation */
+            if ($confirmation->getEnforce()) {
+                $result['enforce'] = $confirmation->getEnforce();
+            }
+            $result['return_url'] = $confirmation->getReturnUrl();
+        }
+
+        return $result;
+    }
+
+    private function serializeReceipt(ReceiptInterface $receipt)
+    {
+        $result = array();
+
+        /** @var ReceiptItem $item */
+        foreach ($receipt->getItems() as $item) {
+            $result['items'][] = $item->jsonSerialize();
+        }
+
+        $customer = $receipt->getCustomer();
+        if (!empty($customer)) {
+            $result['customer'] = $customer->jsonSerialize();
+        }
+
+        $value = $receipt->getTaxSystemCode();
+        if (!empty($value)) {
+            $result['tax_system_code'] = $value;
         }
 
         return $result;
@@ -323,6 +334,24 @@ class CreatePaymentRequestSerializer
             }
 
             $result['vat_data'] = $vatData;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param TransferInterface[] $transfers
+     *
+     * @return array
+     */
+    private function serializeTransfers(array $transfers)
+    {
+        $result = array();
+        foreach ($transfers as $transfer) {
+            $result[] = array(
+                'account_id' => $transfer->getAccountId(),
+                'amount' => $this->serializeAmount($transfer->getAmount())
+            );
         }
 
         return $result;

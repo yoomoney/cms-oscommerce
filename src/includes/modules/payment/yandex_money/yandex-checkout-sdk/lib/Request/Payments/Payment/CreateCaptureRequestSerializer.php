@@ -28,6 +28,7 @@ namespace YandexCheckout\Request\Payments\Payment;
 
 use YandexCheckout\Model\AmountInterface;
 use YandexCheckout\Model\ReceiptItem;
+use YandexCheckout\Model\TransferInterface;
 
 /**
  * Класс объекта осуществляющего сериализацию запроса к API на подтверждение заказа
@@ -49,6 +50,9 @@ class CreateCaptureRequestSerializer
         if ($request->hasAmount()) {
             $result['amount'] = $this->serializeAmount($request->getAmount());
         }
+        if ($request->hasTransfers()) {
+            $result['transfers'] = $this->serializeTransfers($request->getTransfers());
+        }
         if ($request->hasReceipt()) {
             $receipt = $request->getReceipt();
             if ($receipt->notEmpty()) {
@@ -65,26 +69,56 @@ class CreateCaptureRequestSerializer
                         'vat_code'        => $item->getVatCode(),
                     );
 
-                    if ($item->getPaymentSubject()) {
-                        $itemArray['payment_subject'] = $item->getPaymentSubject();
+                    if ($value = $item->getPaymentSubject()) {
+                        $itemArray['payment_subject'] = $value;
                     }
 
-                    if ($item->getPaymentMode()) {
-                        $itemArray['payment_mode'] = $item->getPaymentMode();
+                    if ($value = $item->getPaymentMode()) {
+                        $itemArray['payment_mode'] = $value;
+                    }
+
+                    if ($value = $item->getProductCode()) {
+                        $itemArray['product_code'] = $value;
+                    }
+
+                    if ($value = $item->getCountryOfOriginCode()) {
+                        $itemArray['country_of_origin_code'] = $value;
+                    }
+
+                    if ($value = $item->getCustomsDeclarationNumber()) {
+                        $itemArray['customs_declaration_number'] = $value;
+                    }
+
+                    if ($value = $item->getExcise()) {
+                        $itemArray['excise'] = $value;
                     }
 
                     $result['receipt']['items'][] = $itemArray;
                 }
-                $value = $receipt->getEmail();
-                if (!empty($value)) {
-                    $result['receipt']['email'] = $value;
+
+                if ($customer = $receipt->getCustomer()) {
+                    $customerArray = array();
+
+                    if ($value = $customer->getEmail()) {
+                        $customerArray['email'] = $value;
+                    }
+
+                    if ($value = $customer->getPhone()) {
+                        $customerArray['phone'] = $value;
+                    }
+
+                    if ($value = $customer->getFullName()) {
+                        $customerArray['full_name'] = $value;
+                    }
+
+                    if ($value = $customer->getInn()) {
+                        $customerArray['inn'] = $value;
+                    }
+
+                    $result['receipt']['customer'] = $customerArray;
                 }
-                $value = $receipt->getPhone();
-                if (!empty($value)) {
-                    $result['receipt']['phone'] = $value;
-                }
-                $value = $receipt->getTaxSystemCode();
-                if (!empty($value)) {
+
+                if ($value = $receipt->getTaxSystemCode()) {
                     $result['receipt']['tax_system_code'] = $value;
                 }
             }
@@ -99,5 +133,23 @@ class CreateCaptureRequestSerializer
             'value'    => $amount->getValue(),
             'currency' => $amount->getCurrency(),
         );
+    }
+
+    /**
+     * @param TransferInterface[] $transfers
+     *
+     * @return array
+     */
+    private function serializeTransfers(array $transfers)
+    {
+        $result = array();
+        foreach ($transfers as $transfer) {
+            $result[] = array(
+                'account_id' => $transfer->getAccountId(),
+                'amount' => $this->serializeAmount($transfer->getAmount())
+            );
+        }
+
+        return $result;
     }
 }

@@ -70,7 +70,7 @@ class VatData extends AbstractObject implements VatDataInterface
         if ($rate !== null) {
             $this->setRate($rate);
         }
-        if ($rate !== null) {
+        if ($amount !== null) {
             $this->setAmount($amount);
         }
     }
@@ -122,7 +122,7 @@ class VatData extends AbstractObject implements VatDataInterface
      */
     public function setRate($value)
     {
-        if (TypeCast::canCastToEnumString($value)) {
+        if (TypeCast::canCastToString($value)) {
             if (!VatDataRate::valueExists((string)$value)) {
                 throw new InvalidPropertyValueException('Invalid B2bSberbankVatData.rate value', 0,
                     'B2bSberbankVatData.rate', $value);
