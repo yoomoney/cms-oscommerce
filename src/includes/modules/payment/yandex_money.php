@@ -18,7 +18,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.7';
+    const MODULE_VERSION = '1.1.0';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;

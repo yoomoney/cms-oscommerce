@@ -309,9 +309,8 @@ class CreatePaymentRequestBuilder extends AbstractPaymentRequestBuilder
         if (!empty($options)) {
             $this->setOptions($options);
         }
-        $accountId = $this->recipient->getAccountId();
         $gatewayId = $this->recipient->getGatewayId();
-        if (!empty($accountId) && !empty($gatewayId)) {
+        if (!empty($gatewayId)) {
             $this->currentObject->setRecipient($this->recipient);
         }
         if ($this->receipt->notEmpty()) {
@@ -321,6 +320,8 @@ class CreatePaymentRequestBuilder extends AbstractPaymentRequestBuilder
             $this->currentObject->setAirline($this->airline);
         }
         $this->currentObject->setAmount($this->amount);
+        $this->currentObject->setTransfers($this->transfers);
+
         return parent::build();
     }
 

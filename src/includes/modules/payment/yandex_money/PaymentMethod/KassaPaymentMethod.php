@@ -267,6 +267,10 @@ GROUP BY tr.tax_priority"
             $this->client = new Client();
             $this->client->setAuth($this->getShopId(), $this->getPassword());
             $this->client->setLogger($this->module);
+            $version = explode(' ', PROJECT_VERSION);
+            $userAgent = $this->client->getApiClient()->getUserAgent();
+            $userAgent->setCms('osCommerce', array_pop($version));
+            $userAgent->setModule('yandexmoney-oscommerce', \Yandex_Money::MODULE_VERSION);
         }
 
         return $this->client;

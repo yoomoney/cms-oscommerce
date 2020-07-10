@@ -48,4 +48,32 @@ interface ApiClientInterface
      * @param LoggerInterface|null $logger
      */
     public function setLogger($logger);
+
+    /**
+     * @return UserAgent
+     */
+    public function getUserAgent();
+
+    /**
+     * @param $shopId
+     * @return mixed
+     */
+    public function setShopId($shopId);
+
+    /**
+     * @param $shopPassword
+     * @return mixed
+     */
+    public function setShopPassword($shopPassword);
+
+    /**
+     * @param $bearerToken
+     * @return mixed
+     */
+    public function setBearerToken($bearerToken);
+
+    /**
+     * @param array $config
+     */
+    public function setConfig($config);
 }
