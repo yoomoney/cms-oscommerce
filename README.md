@@ -11,12 +11,12 @@
 // Устанавливаем режим работы:
 // MODULE_PAYMENT_YANDEXMONEY_MODE1 - Яндекс.Касса
 // MODULE_PAYMENT_YANDEXMONEY_MODE2 - Яндекс.Деньги
-// MODULE_PAYMENT_YANDEXMONEY_MODE3 - Яндекс.Платёжка
+// MODULE_PAYMENT_YANDEXMONEY_MODE3 - Платёжка
 define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE1);
 ```
 И замените объявление константы MODULE_PAYMENT_YANDEXMONEY_MODE:
 * `define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE2);` для того чтобы подключить оплату через Яндекс.Деньги;
-* `define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE3);` чтобы использовать Яндекс.Платёжку.
+* `define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE3);` чтобы использовать Платёжку.
 
 Далее рекомендуем следовать пунктам [инструкции](https://kassa.yandex.ru/manuals/oscommerce).
 
