@@ -20,7 +20,7 @@ if (!defined('MODULE_PAYMENT_YANDEXMONEY_MODE1') && $cfgModules && $language){
 // Устанавливаем режим работы:
 // MODULE_PAYMENT_YANDEXMONEY_MODE1 - Яндекс.Касса
 // MODULE_PAYMENT_YANDEXMONEY_MODE2 - Яндекс.Деньги
-// MODULE_PAYMENT_YANDEXMONEY_MODE3 - Яндекс.Платёжка
+// MODULE_PAYMENT_YANDEXMONEY_MODE3 - Платёжка
 define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE1);
 
 Class YandexMoneyObj

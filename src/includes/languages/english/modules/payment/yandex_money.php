@@ -87,7 +87,7 @@ define('MODULE_PAYMENT_YANDEXMONEY_VAT_20_120_LNG', 'Applicable rate 20/120');
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'To the account of the organization with the conclusion of the contract with Yandex.Money');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'On account of the individual user Yandex.Money');
-define('MODULE_PAYMENT_YANDEXMONEY_MODE3', 'Yandex.Billing (bank card, e-wallets)');
+define('MODULE_PAYMENT_YANDEXMONEY_MODE3', 'Billing (bank card, e-wallets)');
 
 define('MODULE_PAYMENT_YANDEXMONEY_ORDER_NAME', 'Order');
 
@@ -119,12 +119,12 @@ define('MODULE_PAYMENT_YANDEXMONEY_SORT2_LNG', '(The smaller - the higher)');
 define('MODULE_PAYMENT_YANDEXMONEY_ORDER_STATUS_LNG','Select the order status that will be assigned after the payment through this module' );
 define('MODULE_PAYMENT_YANDEXMONEY_PAID_STATUS_LNG','Paid [YandexMoney]' );
 
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_STATUS_LNG', 'Activate payments via Yandex.Billing');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_STATUS_LNG', 'Activate payments via Billing');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ID_LNG', 'Form ID');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_LNG', 'Payment purpose');
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DESC_LNG', 'Payment purpose is added to the payment order: specify whatever will help identify the order paid via Yandex.Billing');
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DEF_LNG', 'Order No. %order_is% Payment via Yandex.Billing');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DESC_LNG', 'Payment purpose is added to the payment order: specify whatever will help identify the order paid via Billing');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DEF_LNG', 'Order No. %order_is% Payment via Billing');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID_LNG', 'Order status');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID_DESC_LNG', 'Order status shows the payment result is unknown: you can only learn whether the client made payment or not from an email notification or in your bank');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_FIO_LABEL', 'Payer\'s full name');
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE', 'Yandex.Billing (bank card, e-wallets)');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE', 'Billing (bank card, e-wallets)');

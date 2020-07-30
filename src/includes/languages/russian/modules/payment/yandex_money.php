@@ -87,7 +87,7 @@ define('MODULE_PAYMENT_YANDEXMONEY_VAT_20_120_LNG', 'Расчетная став
 
 define('MODULE_PAYMENT_YANDEXMONEY_MODE1', 'На расчетный счет организации с заключением договора с Яндекс.Деньгами');
 define('MODULE_PAYMENT_YANDEXMONEY_MODE2', 'На счет физического лица в электронной валюте Яндекс.Денег');
-define('MODULE_PAYMENT_YANDEXMONEY_MODE3', 'Яндекс.Платежка (банковские карты, кошелек)');
+define('MODULE_PAYMENT_YANDEXMONEY_MODE3', 'Платежка (банковские карты, кошелек)');
 
 define('MODULE_PAYMENT_YANDEXMONEY_ORDER_NAME', 'Заказ');
 
@@ -123,8 +123,8 @@ define('MODULE_PAYMENT_YANDEXMONEY_BILLING_STATUS_LNG', 'Включить при
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ID_LNG', 'ID формы');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_LNG', 'Назначение платежа');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DESC_LNG', 'Назначение будет в платежном поручении: напишите в нем всё, что поможет отличить заказ, который оплатили через Платежку');
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DEF_LNG', 'Номер заказа %order_id% Оплата через Яндекс.Платежку');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_PURPOSE_DEF_LNG', 'Номер заказа %order_id% Оплата через Платежку');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID_LNG', 'Статус заказа');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_ORDER_STATUS_ID_DESC_LNG', 'Статус должен показать, что результат платежа неизвестен: заплатил клиент или нет, вы можете узнать только из уведомления на электронной почте или в своем банке');
 define('MODULE_PAYMENT_YANDEXMONEY_BILLING_FIO_LABEL', 'ФИО плательщика');
-define('MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE', 'Яндекс.Платежка (банковские карты, кошелек)');
+define('MODULE_PAYMENT_YANDEXMONEY_BILLING_TITLE', 'Платежка (банковские карты, кошелек)');
