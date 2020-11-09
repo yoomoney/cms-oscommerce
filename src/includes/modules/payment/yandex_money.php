@@ -18,7 +18,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.1.1';
+    const MODULE_VERSION = '1.2.0';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
@@ -93,7 +93,7 @@ class Yandex_Money
                             .'<td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
         }
 
-        $js = <<<JS
+        $js = <<<HTML
 <style>
 #backup-list-window table {
     width: 100%;
@@ -198,7 +198,7 @@ jQuery(document).ready(function () {
     }
 });
 </script>
-JS;
+HTML;
 
         $this->description .= $versionText.$js;
     }

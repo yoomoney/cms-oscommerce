@@ -20,7 +20,7 @@ class Updater
     private $backupDirectory = 'yandex_money/backup';
     private $versionDirectory = 'yandex_money/updates';
     private $downloadDirectory = 'yandex_money';
-    private $repository = 'yandex-money/yandex-money-cms-v2-oscommerce';
+    private $repository = 'yoomoney/yandex-money-cms-v2-oscommerce';
 
     public function __construct(\Yandex_Money $module)
     {
