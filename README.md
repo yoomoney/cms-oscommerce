@@ -1,44 +1,42 @@
-# yandex-money-cms-v2-oscommerce
+# yoomoney-cms-oscommerce
 
-С помощью модуля можно настроить прием платежей через Яндекс.Кассу
+С помощью модуля можно настроить прием платежей через ЮKassa
 
-[Инструкция по настройке](https://kassa.yandex.ru/manuals/oscommerce)
+[Инструкция по настройке](https://yookassa.ru/docs/support/payments/onboarding/integration/cms-module/oscommerce)
 
-Для установки данного модуля необходимо переместить папки `ext`, `includes` и файл `callback.php` из папки `src` [архива](https://github.com/yoomoney/yandex-money-cms-v2-oscommerce/archive/master.zip) в корень Вашего сайта.
+Для установки данного модуля необходимо переместить папки `ext`, `includes` и файл `yoomoney_callback.php` из папки `src` [архива](https://github.com/yoomoney/cms-oscommerce/archive/master.zip) в корень Вашего сайта.
 
-По умолчанию модуль устанавливается для работы с Яндекс.Кассой, для того чтобы его изменить в файле [src/ext/modules/payment/yandex_money/yandex_money.php](src/ext/modules/payment/yandex_money/yandex_money.php) найдите строки:
+По умолчанию модуль устанавливается для работы с ЮKassa, для того чтобы его изменить в файле [src/ext/modules/payment/yoomoney/yoomoney.php](src/ext/modules/payment/yoomoney/yoomoney.php) найдите строки:
 ```php
 // Устанавливаем режим работы:
-// MODULE_PAYMENT_YANDEXMONEY_MODE1 - Яндекс.Касса
-// MODULE_PAYMENT_YANDEXMONEY_MODE2 - Яндекс.Деньги
-// MODULE_PAYMENT_YANDEXMONEY_MODE3 - Платёжка
-define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE1);
+// MODULE_PAYMENT_YOOMONEY_MODE1 - ЮKassa
+// MODULE_PAYMENT_YOOMONEY_MODE2 - ЮMoney
+define('MODULE_PAYMENT_YOOMONEY_MODE', MODULE_PAYMENT_YOOMONEY_MODE1);
 ```
-И замените объявление константы MODULE_PAYMENT_YANDEXMONEY_MODE:
-* `define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE2);` для того чтобы подключить оплату через Яндекс.Деньги;
-* `define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE3);` чтобы использовать Платёжку.
+И замените объявление константы MODULE_PAYMENT_YOOMONEY_MODE:
+* `define('MODULE_PAYMENT_YOOMONEY_MODE', MODULE_PAYMENT_YOOMONEY_MODE2);` для того чтобы подключить оплату через ЮMoney;
 
-Далее рекомендуем следовать пунктам [инструкции](https://kassa.yandex.ru/manuals/oscommerce).
+Далее рекомендуем следовать пунктам [инструкции](https://yookassa.ru/docs/support/payments/onboarding/integration/cms-module/oscommerce).
 
 Пожалуйста, обязательно делайте бекапы!
 
-### О Кассе
+### О ЮKassa
 Сервис, который позволяет включить прием платежей на сайте.
 
-[Сайт Кассы](http://kassa.yandex.ru/)
+[Сайт ЮKassa](http://yookassa.ru/)
 
 #### Условия
 * подходит для юрлиц и ИП,
 * деньги приходят на расчетный счет, 
 * комиссия берется с каждого успешного платежа.
 
-Для использования нужно [подключиться к Яндекс.Кассе](https://money.yandex.ru/joinups) и получить в личном кабинете на сайте Кассы параметры **shopId** и **Секретный ключ**.
+Для использования нужно [подключиться к ЮKassa](https://yookassa.ru/joinups) и получить в личном кабинете на сайте ЮKassa параметры **shopId** и **Секретный ключ**.
 
 ### Способы приема платежей
 Вы можете выбрать любое количество способов из списка:
 
 * Банковские карты — Visa, Mastercard и Maestro, «Мир»;
-* Яндекс.Деньги;
+* ЮMoney;
 * Webmoney;
 * QIWI Wallet;
 * Наличные;
@@ -48,20 +46,20 @@ define('MODULE_PAYMENT_YANDEXMONEY_MODE', MODULE_PAYMENT_YANDEXMONEY_MODE1);
 
 ### Дополнительные возможности
 
-**Оплата на стороне Яндекса**
+**Оплата на стороне ЮKassa**
 
-Включите в модуле оплату на стороне Яндекса — и не придется размещать на своем сайте все способы оплаты. Вместо этого останется одна кнопка «Заплатить».
+Включите в модуле оплату на стороне ЮKassa — и не придется размещать на своем сайте все способы оплаты. Вместо этого останется одна кнопка «Заплатить».
  
-[Пример в демо-магазине Кассы](https://kassa.yandex.ru/demo/index.html)
+[Пример в демо-магазине ЮKassa](https://yookassa.ru/demo/)
 
 **Отправка данных для чеков по 54-фз**
 
-Если вы подключите решение Кассы для 54-фз, модуль будет отправлять в Кассу данные для чека вместе с информацией о заказе.
+Если вы подключите решение ЮKassa для 54-фз, модуль будет отправлять в ЮKassa данные для чека вместе с информацией о заказе.
  
-[Подробности на сайте Кассы](https://kassa.yandex.ru/features) 
+[Подробности на сайте ЮKassa](https://yookassa.ru/features/) 
 
 ### Контакты
-Если у вас есть вопросы или идеи для модуля, напишите нам: cms@yamoney.ru
+Если у вас есть вопросы или идеи для модуля, напишите нам: cms@yoomoney.ru
 
 В письме укажите:
 * версию платформы,
