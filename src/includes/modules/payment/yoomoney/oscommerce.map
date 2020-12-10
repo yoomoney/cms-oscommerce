@@ -1,0 +1,7 @@
+b:src
+f:ext/modules/payment/yoomoney/yoomoney.php
+f:includes/languages/{english,russian}/modules/payment/yoomoney.php
+f:admin/ext/modules/payment/yoomoney/ajax.php
+d:includes/modules/payment/yoomoney
+f:includes/modules/payment/yoomoney.php
+f:yoomoney_callback.php
