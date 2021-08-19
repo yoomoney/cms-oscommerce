@@ -50,7 +50,7 @@ define('MODULE_PAYMENT_YOOMONEY_MODE', MODULE_PAYMENT_YOOMONEY_MODE1);
 
 Включите в модуле оплату на стороне ЮKassa — и не придется размещать на своем сайте все способы оплаты. Вместо этого останется одна кнопка «Заплатить».
  
-[Пример в демо-магазине ЮKassa](https://yookassa.ru/demo/)
+[Пример в демо-магазине ЮKassa](https://demo.yookassa.ru/)
 
 **Отправка данных для чеков по 54-фз**
 
