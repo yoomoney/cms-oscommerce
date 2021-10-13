@@ -30,7 +30,7 @@ define('MODULE_PAYMENT_YOOMONEY_SHOP_PASSWORD_LABEL', 'Секретный клю
 define('MODULE_PAYMENT_YOOMONEY_SHOP_PASSWORD_DESCRIPTION', 'Выпустите и активируйте секретный ключ в личном кабинете ЮKassa. Потом скопируйте его сюда.');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_MODE_LABEL', 'Выбор способа оплаты на стороне магазина');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_BANK_CARD_LABEL', 'Банковские карты');
-define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_SBERBANK_LABEL', 'Сбербанк Онлайн');
+define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_SBERBANK_LABEL', 'SberPay');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_WEBMONEY_LABEL', 'Webmoney');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_ALFABANK_LABEL', 'Альфа-Клик');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_TINKOFF_BANK_LABEL', 'Интернет-банк Тинькофф');
@@ -40,7 +40,7 @@ define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_YOO_MONEY_LABEL', 'ЮMoney');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_INSTALLMENTS_LABEL', 'Заплатить по частям');
 
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_BANK_CARD_TEXT', 'Банковские карты');
-define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_SBERBANK_TEXT', 'Сбербанк Онлайн');
+define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_SBERBANK_TEXT', 'SberPay');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_WEBMONEY_TEXT', 'Webmoney');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_ALFABANK_TEXT', 'Альфа-Клик');
 define('MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_TINKOFF_BANK_TEXT', 'Интернет-банк Тинькофф');
@@ -74,7 +74,7 @@ define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_GP", "Наличными че�
 define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_MC", "Счет мобильного телефона");
 define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_WM", "Кошелек WebMoney");
 define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_AB", "Альфа-Клик");
-define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_SB", "Сбербанк: оплата по SMS или Сбербанк Онлайн");
+define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_SB", "Сбербанк: оплата по SMS или SberPay");
 define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_MA", "MasterPass");
 define("MODULE_PAYMENT_YOOMONEY_TEXT_PAYMENT_TYPE_QW", "QIWI Wallet");
 
@@ -102,7 +102,7 @@ define('MODULE_PAYMENT_YOOMONEY_ACCEPT_MOBILE_LNG', 'Платеж со счет�
 define('MODULE_PAYMENT_YOOMONEY_ACCEPT_CARDS_LNG', 'Оплата с произвольной банковской карты? ');
 define('MODULE_PAYMENT_YOOMONEY_WEBMONEY_LNG', 'Оплата из кошелька в системе WebMoney?');
 define('MODULE_PAYMENT_YOOMONEY_AB_LNG', 'Оплата через Альфа-Клик?');
-define('MODULE_PAYMENT_YOOMONEY_SB_LNG', 'Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн?');
+define('MODULE_PAYMENT_YOOMONEY_SB_LNG', 'Оплата через Сбербанк: оплата по SMS или SberPay?');
 define('MODULE_PAYMENT_YOOMONEY_MA_LNG', 'Оплата через MasterPass?');
 define('MODULE_PAYMENT_YOOMONEY_PB_LNG', 'Оплата через интернет-банк Промсвязьбанка?');
 define('MODULE_PAYMENT_YOOMONEY_QW_LNG', 'Оплата через QIWI Wallet?');
