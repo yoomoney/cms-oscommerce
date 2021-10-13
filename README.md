@@ -41,7 +41,7 @@ define('MODULE_PAYMENT_YOOMONEY_MODE', MODULE_PAYMENT_YOOMONEY_MODE1);
 * QIWI Wallet;
 * Наличные;
 * Альфа-Клик;
-* Сбербанк Онлайн;
+* SberPay;
 * Баланс мобильного — Билайн, Мегафон, МТС, Tele2.
 
 ### Дополнительные возможности
