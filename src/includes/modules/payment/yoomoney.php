@@ -17,7 +17,7 @@ class YooMoney
     const MODE_KASSA = 1;
     const MODE_MONEY = 2;
 
-    const MODULE_VERSION = '2.1.0';
+    const MODULE_VERSION = '2.1.1';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
