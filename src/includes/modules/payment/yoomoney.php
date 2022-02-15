@@ -17,7 +17,7 @@ class YooMoney
     const MODE_KASSA = 1;
     const MODE_MONEY = 2;
 
-    const MODULE_VERSION = '2.1.1';
+    const MODULE_VERSION = '2.1.2';
     const INSTALLMENTS_MIN_AMOUNT = 3000;
 
     public $code;
@@ -27,6 +27,12 @@ class YooMoney
     public $org;
     private $epl;
     private $mode;
+
+    public static $disabledMethods = array(
+        PaymentMethodType::B2B_SBERBANK,
+        PaymentMethodType::WECHAT,
+        PaymentMethodType::WEBMONEY,
+    );
 
     public function __construct()
     {
@@ -101,12 +107,12 @@ class YooMoney
 </style>
 <script type="text/javascript">
 jQuery(document).ready(function () {
-    
+
     jQuery('#backup-list-window').delegate('a.restore-backup', 'click', restoreBackupHandler);
     jQuery('#backup-list-window').delegate('a.remove-backup', 'click', removeBackupHandler);
-    
+
     jQuery('#update-module').click(updateModuleHandler);
-    
+
     jQuery('#backup-list').click(function () {
         jQuery.ajax({
             url: 'ext/modules/payment/yoomoney/ajax.php',
@@ -134,7 +140,7 @@ jQuery(document).ready(function () {
             }
         });
     });
-    
+
     function restoreBackupHandler() {
         var row = jQuery(this).parents('tr.backup-row')[0];
         if (window.confirm('Вы действительно хотите восстановить резервную копию "' + row.dataset.id + '" из файла "' + row.dataset.name + '"?')) {
@@ -154,7 +160,7 @@ jQuery(document).ready(function () {
             });
         }
     }
-    
+
     function removeBackupHandler() {
         var row = jQuery(this).parents('tr.backup-row')[0];
         if (window.confirm('Вы действительно хотите удалить резервную копию "' + row.dataset.name + '" для версии "' + row.dataset.id + '"?')) {
@@ -174,7 +180,7 @@ jQuery(document).ready(function () {
             });
         }
     }
-    
+
     function updateModuleHandler() {
         if (window.confirm('Вы действительно хотите обновить модуль до последней версии?')) {
             jQuery.ajax({
@@ -241,7 +247,7 @@ HTML;
             $additional_fields = array();
             $payment_types     = array();
             foreach (PaymentMethodType::getEnabledValues() as $value) {
-                if (!in_array($value, array(PaymentMethodType::B2B_SBERBANK, PaymentMethodType::WECHAT))) {
+                if (!in_array($value, self::$disabledMethods)) {
                     $const = 'MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_'.strtoupper($value);
                     if (defined($const) && constant($const) == MODULE_PAYMENT_YOOMONEY_TRUE) {
                         $const .= '_TEXT';
@@ -307,13 +313,13 @@ HTML;
 <script>
 jQuery(document).ready(function () {
     var form = document.forms.checkout_payment;
-    
+
     var qiwiBlock = jQuery("#yoomoney-qiwi-phone").parent().parent();
     var alfaBlock = jQuery("#yoomoney-alfa-login").parent().parent();
-    
+
     qiwiBlock.css("display", "none");
     alfaBlock.css("display", "none");
-    
+
     jQuery(form.yoomoney_payment_type).change(function () {
         qiwiBlock.css("display", "none");
         alfaBlock.css("display", "none");
@@ -554,7 +560,7 @@ HTML
                 'MODULE_PAYMENT_YOOMONEY_PAYMENT_DESCRIPTION',
             );
             foreach (PaymentMethodType::getEnabledValues() as $value) {
-                if (!in_array($value, array(PaymentMethodType::B2B_SBERBANK, PaymentMethodType::WECHAT))) {
+                if (!in_array($value, self::$disabledMethods)) {
                     $array[] = 'MODULE_PAYMENT_YOOMONEY_PAYMENT_METHOD_'.strtoupper($value);
                 }
             }
@@ -625,61 +631,61 @@ HTML
         }
 
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_TEST_LANG."', 
-            'MODULE_PAYMENT_YOOMONEY_TEST', 
-            '".MODULE_PAYMENT_YOOMONEY_TRUE."', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_TEST_LANG."',
+            'MODULE_PAYMENT_YOOMONEY_TEST',
+            '".MODULE_PAYMENT_YOOMONEY_TRUE."',
+            '',
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YOOMONEY_TRUE."\', \'".MODULE_PAYMENT_YOOMONEY_FALSE."\'), ', now())"
         );
 
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_STATUS_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_STATUS', 
-            '".MODULE_PAYMENT_YOOMONEY_TRUE."', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_STATUS_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_STATUS',
+            '".MODULE_PAYMENT_YOOMONEY_TRUE."',
+            '',
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YOOMONEY_TRUE."\', \'".MODULE_PAYMENT_YOOMONEY_FALSE."\'), ', now())"
         );
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_ACCEPT_YOOMONEY_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_ACCEPT_YOOMONEY', 
-           '".MODULE_PAYMENT_YOOMONEY_TRUE."', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_ACCEPT_YOOMONEY_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_ACCEPT_YOOMONEY',
+           '".MODULE_PAYMENT_YOOMONEY_TRUE."',
+            '',
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YOOMONEY_TRUE."\', \'".MODULE_PAYMENT_YOOMONEY_FALSE."\'),', now())"
         );
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_ACCEPT_CARDS_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_ACCEPT_CARDS', 
-            '".MODULE_PAYMENT_YOOMONEY_TRUE."', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_ACCEPT_CARDS_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_ACCEPT_CARDS',
+            '".MODULE_PAYMENT_YOOMONEY_TRUE."',
+            '',
             '6', '0', 'tep_cfg_select_option(array(\'".MODULE_PAYMENT_YOOMONEY_TRUE."\', \'".MODULE_PAYMENT_YOOMONEY_FALSE."\'),', now())"
         );
 
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
         '".MODULE_PAYMENT_YOOMONEY_ACCOUNT_LNG."',
-        'MODULE_PAYMENT_YOOMONEY_ACCOUNT', 
-        '', 
-         '".MODULE_PAYMENT_YOOMONEY_ONLY_IND_LNG."', 
+        'MODULE_PAYMENT_YOOMONEY_ACCOUNT',
+        '',
+         '".MODULE_PAYMENT_YOOMONEY_ONLY_IND_LNG."',
         '6', '0', now())");
 
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_PASSWORD_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_PASSWORD', 
-            '', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_PASSWORD_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_PASSWORD',
+            '',
+            '',
             '6', '0', now())");
 
 
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_SORT_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_SORT_ORDER', 
-            '0', 
-            '".MODULE_PAYMENT_YOOMONEY_SORT2_LNG."', 
+            '".MODULE_PAYMENT_YOOMONEY_SORT_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_SORT_ORDER',
+            '0',
+            '".MODULE_PAYMENT_YOOMONEY_SORT2_LNG."',
             '6', '0', now())");
         tep_db_query("insert into ".TABLE_CONFIGURATION." (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values (
-            '".MODULE_PAYMENT_YOOMONEY_ORDER_STATUS_LNG."', 
-            'MODULE_PAYMENT_YOOMONEY_ORDER_STATUS_ID', 
-            '', 
-            '', 
+            '".MODULE_PAYMENT_YOOMONEY_ORDER_STATUS_LNG."',
+            'MODULE_PAYMENT_YOOMONEY_ORDER_STATUS_ID',
+            '',
+            '',
             '6', '0', 'tep_cfg_pull_down_order_statuses(', 'tep_get_order_status_name', now())");
 
     }
